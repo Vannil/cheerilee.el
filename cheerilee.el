@@ -86,10 +86,6 @@
 ;; Please, always (require 'cheerilee), instead of a specific part
 ;; of the library.
 
-;; It's good form to properly close the connection when the
-;; application closes (in this case, the whole environment)
-(add-hook 'kill-emacs-hook #'cheerilee-close-absolutely-everything t)
-
 (provide 'cheerilee)
 
 ;;; cheerilee.el ends here

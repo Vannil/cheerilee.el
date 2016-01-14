@@ -76,7 +76,13 @@
     (xcb:+event cheerilee-connection
 		'xcb:KeyRelease #'cheerilee-key-release-event)
     (xcb:+event cheerilee-connection
-		'xcb:KeyRelease #'cheerilee-motion-notify-event)))
+		'xcb:KeyRelease #'cheerilee-motion-notify-event)
+    ;; Apparently, Emacs tries to close all processes before running
+    ;; `kill-emacs-hook'. This is incovenient, because closing Emacs
+    ;; before disconnecting will always prompt the user.
+    ;; This is pretty annoying, so as a workaround, the process
+    ;; will not query the user before bing killed.
+    (set-process-query-on-exit-flag (oref cheerilee-connection process) nil)))
 
 ;;;###autoload
 (defun cheerilee-close-absolutely-everything ()
