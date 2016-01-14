@@ -1,12 +1,17 @@
 2016-01-14  Alessio Vanni  <vannilla@airmail.cc>
 
+	* cheerilee-core.el: Changed Connection Handling
+	Changed the connection's query-on-exit flag to nil.
+	This will make Emacs kill the process without
+	asking the user.
+
 	* cheerilee-definitions.el: Better macros
 	Changed the macro definitions a bit. Now they should
 	work better than before.
 
 2016-01-10  Alessio Vanni  <vannilla@airmail.cc>
 
-	* cheerilee-core.el: Removing elements
+	* cheerilee-core.el: Removing Elements
 	Added function to remove elements from the tree.
 
 2016-01-05  Alessio Vanni  <vannilla@airmail.cc>
