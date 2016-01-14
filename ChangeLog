@@ -1,0 +1,198 @@
+2016-01-14  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-definitions.el: Better macros
+	Changed the macro definitions a bit. Now they should
+	work better than before.
+
+2016-01-10  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-core.el: Removing elements
+	Added function to remove elements from the tree.
+
+2016-01-05  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-core.el: Element Handling
+	Added a function to add elements to the application
+	tree after the application has started.
+
+2016-01-04  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-handle.el: New Event
+	Added Mouse Motion Notify event handling.
+
+	* cheerilee-display.el: Changed Font Opening
+	Changed a bit the way fonts are opened, giving the user
+	the ability to add new one.
+
+	* cheerilee-actions.el: Changed File Name
+	Changed from -move to -actions as to group together
+	different functions with a common use.
+
+	* cheerilee-handle.el: Better Event Handling
+	Made event handling less global.
+
+2016-01-03  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-textbox.el: Better Text Handling
+	Changed the way text is updated and whatnot.
+
+	* cheerilee-handle.el: Better Handler Calling
+	Changed the way event handlers are called.
+
+	* cheerilee-core.el: Function Application
+	Removed an old searching function used only to apply functions
+	to elements, and added a better one instead that actually
+	applies functions.
+
+2016-01-02  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-handle.el: Better Event Handling
+	Made adding events to elements less global.
+
+2015-12-30  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-textbox.el: Text Operations
+	Added functions to operate on text inside the box.
+
+	* cheerilee-core.el: Clear Area
+	Added a slight optimization to the Clear Area function.
+
+2015-12-28  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-textbox.el: Better Text Insertion
+	Actually insert the correct symbols, can also delete them.
+
+	* cheerilee-core.el: New Events
+	Added support for new events.
+
+	* cheerilee-handle.el: Keyboard Events
+	Added support for keyboard events handling.
+
+	* cheerilee-textbox.el: New File
+	Defined new functions to handle textboxes:
+	selecting, unselecting, text insertion.
+
+2015-12-27  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-display.el: Textbox
+	Added display instructions for textbox elements.
+
+	* cheerilee-classes.el: New Classess
+	Added new classes, changed concrete classes relations.
+
+	* cheerilee-destroy.el: Added new element
+	Added disposition of text elements.
+
+	* cheerilee-display.el: Added missing shapes
+	Added rendering support for planned shapes.
+	Added display instructions for text elements.
+
+2015-12-26  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-handle.el: Pointer Capturing
+	Mouse Button Press events capture the pointer, disabling other
+	Button Press events. Mouse Button Release events always free it.
+
+	* cheerilee-classes.el: Added Fields
+	Added more fields to the control class.
+
+	* cheerilee-handle.el: Button Release
+	Added handling for Mouse Button Release events.
+
+	* cheerilee-core.el: Getting Elements
+	Added a function to get a list of all elements of all applications.
+
+	* cheerilee-handle.el (cheerilee-add-button-press-event): Better Searching
+	Changed the way elements are searched.
+
+	* cheerilee-core.el: ID Searching
+	Added a function to search the elements tree by ID.
+
+2015-12-24  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-handle.el: Better Checking
+	Fixed a bug when checking if the event was inside the element.
+
+	* cheerilee-move.el: Better Movement
+	Changed the way moving elements is performed.
+
+	* cheerilee-display.el (cheerilee--display-control): Better Display
+	Fixed a bug with the clipping and other calculations.
+
+	* cheerilee-core.el: Clipping
+	Fixed how the unclipped area is calculated,
+	added a function to set the area to keep unclipped.
+
+2015-12-23  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-move.el: New file
+	Created new functions: controls now 'snap' to the clipping area,
+	hopefully preserving the correct border width.
+	Created new functions: controls now can move by providing
+	a distance as dx and dy.
+
+	* cheerilee-handle.el (cheerilee-configure-notify-event): Clearing
+	Moved clearing delay from core.el to here.
+
+	* cheerilee-display.el (cheerilee-expose-event): Better Clipping
+	Clip rectangles now show more of the borders.
+	Still buggy and does not work properly with large borders.
+
+2015-12-22  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-core.el: Shape Handling
+	Changed the way the shapes alist is handled.
+	It is now created with a deep copy of the empty alist.
+
+	* cheerilee-handle.el (cheerilee-configure-notify-event): Clearing
+	Added area clearing to the event handler.
+	This way hopefully it simulates a N fps refresh rate.
+
+	* cheerilee-core.el: Clear Area
+	Added a new function to clear a frame on demand.
+	The current delay might need to be adjusted.
+
+	* cheerilee-display.el (cheerilee--display-control): Clip Area
+	Changed how clipping is managed.
+	It's still very buggy, treat with care.
+
+	* cheerilee-handle.el: New handle
+	Handled ConfigureNotify to correctly update informations
+	about the reconfigured frame.
+
+	* cheerilee-core.el (cheerilee-connect): New event
+	Added new event to be handled: ConfigureNotify is
+	triggered when e.g. a resize of the frame is performed.
+
+	* cheerilee-definitions.el: Added header, changed docs
+	Added the header comments: Author, Copyright, Commentary, ...
+	Written documentation according to checkdoc.
+
+	* cheerilee-handle.el: Added header, changed docs, changed fun
+	Added the header comments: Author, Copyright, Commentary, ...
+	Written documentation according to checkdoc.
+	Changed how mouse button press event are handled if the event
+	is outside the control.
+
+	* cheerilee-destroy.el: Added header, changed docs, fixed bug
+	Added the header comments: Author, Copyright, Commentary, ...
+	Written documentation according to checkdoc.
+	Fixed a bug in which only toplevel elements are disposed, ignoring
+	any children of said elements.
+
+	* cheerilee-display.el: Added header, changed docs
+	Added the header comments: Author, Copyright, Commentary, ...
+	Written documentation according to checkdoc.
+
+	* cheerilee-core.el: Added header, autoloads
+	Added the header comments: Author, Copyright, Commentary, ...
+	Defined some autoload magic for certain functions.
+	Moved here some functions from other files.
+
+	* cheerilee-classes.el: Added header
+	Added the header comments: Author, Copyright, Commentary, ...
+
+	* cheerilee.el: Let's start this!
+	The Changelog started way into development.
+	Alas, tis how it went.
+
