@@ -184,20 +184,18 @@ application in which the event happened."
 (defmethod cheerilee--key-press ((ctrl cheerilee-control) detail modifier)
   "Execute CTRL's Keyboard Button Press handling functions.
 
-X and Y are used to determine the location of the mouse; DETAIL is a
-description of the button that generated the event; TREE is the
-application in which the event happened."
+DETAIL is the key pressed, MODIFIER any additional key that can chage the
+actual value."
   (dolist (el (oref ctrl key-press))
-    (funcall el ctrl detail)))
+    (funcall el ctrl detail modifier)))
 
 (defmethod cheerilee--key-release ((ctrl cheerilee-control) detail modifier)
     "Execute CTRL's Keyboard Button Release handling functions.
 
-X and Y are used to determine the location of the mouse; DETAIL is a
-description of the button that generated the event; TREE is the
-application in which the event happened."
+DETAIL is the key released, MODIFIER any additional key that can chage the
+actual value."
   (dolist (el (oref ctrl key-release))
-    (funcall el ctrl detail)))
+    (funcall el ctrl detail modifier)))
 
 (provide 'cheerilee-handle)
 
