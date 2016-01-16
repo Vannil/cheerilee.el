@@ -1,0 +1,499 @@
+This is cheerilee.info, produced by makeinfo version 5.2 from
+cheerilee.texi.
+
+This manual is for the Cheerilee toolkit library.
+
+   Copyright (C) 2015-2106 Alessio Vanni
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* Cheerilee: (cheerilee).       Graphical toolkit library
+END-INFO-DIR-ENTRY
+
+
+File: cheerilee.info,  Node: Top,  Next: Overview,  Up: (dir)
+
+Cheerilee
+*********
+
+This manual is for the Cheerilee toolkit library.
+
+   Copyright (C) 2015-2106 Alessio Vanni
+
+* Menu:
+
+* Overview::    A general introduction to the library.
+* Installation::  Getting it to work.
+* Connecting:: Starting and stopping the connection.
+* Defining Elements::     Creating the elements to display.
+* Starting Applications:: Running an application after defining it.
+* Events:: Handling different kinds of events.
+* Index::         Complete Index.
+* Functions::     A list of every function available.
+* Variables::     A list of every variable available.
+
+
+File: cheerilee.info,  Node: Overview,  Next: Installation,  Prev: Top,  Up: Top
+
+1 Overview
+**********
+
+Cheerilee is a graphical toolkit library written in Emacs Lisp.  It
+allows Emacs to create graphical application, using the X11 protocol.
+
+   Each application is defined by a tree of elements.  Every element has
+a set of attributes, to specify e.g.  the location of the element.
+*Note Defining Elements::.
+
+   The library also offers facilities to handle events, like keyboard
+inputs, or mouse clicks.  *Note Events::.
+
+
+File: cheerilee.info,  Node: Installation,  Next: Connecting,  Prev: Overview,  Up: Top
+
+2 Installation
+**************
+
+Installing the library is as simple as adding the directory to your
+'load-path':
+
+     (add-to-list 'load-path "/path/to/library")
+
+   After that, just '(require 'cheerilee)' to load all the symbols.
+
+
+File: cheerilee.info,  Node: Connecting,  Next: Defining Elements,  Prev: Installation,  Up: Top
+
+3 Connecting
+************
+
+Before an application can run, Emacs needs to connect with the X server.
+
+ -- Variable: cheerilee-connection
+     This variable holds all the needed informations about the current
+     connection.
+
+   The following functions control connections and disconnections with
+the server.
+
+ -- Function: cheerilee-connect
+     Start a connection between Emacs and the X server.  The connection
+     is done through a socket, so the server must run in the same
+     machine as Emacs.
+
+     The function also initializes event handling.
+
+ -- Function: cheerilee-close-absolutely-everything
+     Disconnects Emacs from the X server.
+
+     Since the connection is closed, any running application is
+     automatically closed, and any allocated resource is freed from
+     memory.
+
+ -- Function: cheerilee-process-alive-p
+     Returns 'nil' if there is no connection with the X server,
+     otherwise it returns 't'.
+
+
+File: cheerilee.info,  Node: Defining Elements,  Next: Starting Applications,  Prev: Connecting,  Up: Top
+
+4 Defining Elements
+*******************
+
+To have a working application, you first need to define its structure.
+This is done by defining elements through specific macros.
+
+   The following sections describe these macros:
+
+* Menu:
+
+* Frame::       The root window
+* Window::      A generic container
+* Button::      An element with text inside
+* Text::        Displaying a string
+* Textbox::     Inserting and manipulating text
+* Examples::    Complete examples of application trees.
+
+
+File: cheerilee.info,  Node: Frame,  Next: Window,  Up: Defining Elements
+
+4.1 Frame
+=========
+
+A frame is a simple X window.  Any other element is displayed inside
+this window, and, as such, it must be the root of the tree.  The name
+comes from Emacs's frames (*note (emacs)Frames::).
+
+ -- Macro: cheerilee-defframe id &rest args-and-children
+     'cheerilee-defframe' defines a new frame, using ID as its name.
+     'args-and-children' is a set of optional attribute definitions,
+     followed by a set of children.
+
+     The frame element's attributes are the following:
+
+     ':name'
+          The application's name, as displayed by the window manager.
+          If not provided, it defaults to "Application".
+
+     ':background'
+          The frame's background color, as a string.  If not provided,
+          it defaults to "white".
+
+     ':size'
+          The frame's dimensions.  The passed value must be a cons,
+          defined either as
+
+               '(CAR . CDR)
+
+          or as
+
+               (cons CAR CDR)
+
+          CAR and CDR must be non-floating point numbers.
+
+
+File: cheerilee.info,  Node: Window,  Next: Button,  Prev: Frame,  Up: Defining Elements
+
+4.2 Window
+==========
+
+A window is a generic rectangular area.  It's purpose is to be a
+container for other elements.  The name comes from Emacs's windows
+(*note (emacs)Windows::).
+
+ -- Macro: cheerilee-defwindow id &rest args-and-children
+     'cheerilee-defwindow' defines a new window, using ID as its name.
+     'args-and-children' is a set of optional attribute definitions,
+     followed by a set of children.
+
+     The window element's attributes are the following:
+
+     ':location'
+          The location of the element inside its parent.  The passed
+          value must be a cons, defined either as
+
+               '(CAR . CDR)
+
+          or as
+
+               (cons CAR CDR)
+
+          CAR and CDR must be non-floating point numbers.
+
+          The location is relative, so, for example, if the window is a
+          inside of a frame, the value passed to the attribute is
+          relative to (0 .  0), otherwise, if the window is inside
+          another window located at (100 .  33), the actual location of
+          this window is
+
+               (cons (+ 100 CAR) (+ 33 CDR))
+
+     ':size'
+          The window dimensions.  The passed value must be a cons,
+          defined either as
+
+               '(CAR . CDR)
+
+          or as
+
+               (cons CAR CDR)
+
+          CAR and CDR must be non-floating point numbers.
+
+     ':foreground'
+          The color used to draw the window's borders, as a string.  If
+          not provided, it defaults to "black".
+
+     ':line-width'
+          How much wide lines are drawn.
+
+
+File: cheerilee.info,  Node: Button,  Next: Text,  Prev: Window,  Up: Defining Elements
+
+4.3 Button
+==========
+
+The button element is a box with a string of text inside.  Its purpose
+is to add basic user interactions to the application.
+
+ -- Macro: cheerilee-defbutton id &rest args
+     'cheerilee-defbutton' defines a new button, using ID as its name.
+     'args' is a set of optional attribute definitions.
+
+     The attributes are the same of windows (*note Window::), with the
+     following attributes added:
+
+     ':background'
+          The color used as the text background, as a string.  It is a
+          good idea to keep it the same as the frame's background color,
+          unless you want to highlight it.  If not provided it defaults
+          to "white".
+
+     ':font'
+          The font used to display text.  It must be a valid X font
+          name, as a string.  If not provided, it defaults to "7x14".
+
+     ':text'
+          The actual text to be displayed inside the element.  Needless
+          to say, it must be a string.
+
+
+File: cheerilee.info,  Node: Text,  Next: Textbox,  Prev: Button,  Up: Defining Elements
+
+4.4 Text
+========
+
+The text element has the only purpose of showing a string without being
+bound by any relation (besides the parent-child given by the tree
+structure) with other elements.
+
+ -- Macro: cheerilee-deftext id &rest args
+     'cheerilee-deftext' defines a new text element, using ID as its
+     name.  'args' is a set of optional attribute definitions.
+
+     The attributes are the same as the button (*note Button::), with
+     the exception of the ':size' attribute, absent in the text element.
+
+
+File: cheerilee.info,  Node: Textbox,  Next: Examples,  Prev: Text,  Up: Defining Elements
+
+4.5 Textbox
+===========
+
+The textbox elements allows the user to insert and delete text inside
+it.  Its main purpose is to get text inputs from the user.
+
+ -- Macro: cheerilee-deftextbox id &rest args
+     'cheerilee-deftextbox' defines a new textbox element, using ID as
+     its name.  'args' is a set of optional attribute definitions.
+
+     The attributes are the same as the button (*note Button::).  In
+     this case, the ':text' field is used as the initial content of the
+     textbox.
+
+
+File: cheerilee.info,  Node: Examples,  Prev: Textbox,  Up: Defining Elements
+
+4.6 Examples
+============
+
+This section shows some complete trees examples.
+
+   The following expression generates a frame with ID "Frame".  This
+frame has a window inside, with ID "0".  Finally, the window has the
+string "This is an example" inside, as an element with ID "0.5".
+
+     (cheerilee-defframe "Frame"
+       :size (cons 640 480)
+       :name "Example 1"
+       (cheerilee-defwindow 0
+         :location (cons 10 5)
+         :size (cons 220 204)
+         (cheerilee-deftext 0.5
+           :text "This is an example"
+           :location (cons 30 25))))
+
+   The following expression generates a tree similar to the previous
+one, but now the frame has a second child, a button with ID "?k".
+
+     (cheerilee-defframe "Frame"
+       :size (cons 640 480)
+       :name "Example 1"
+       (cheerilee-defwindow 0
+         :location (cons 10 5)
+         :size (cons 220 204)
+         (cheerilee-deftext 0.5
+           :text "This is an example"
+           :location (cons 30 25)))
+       (cheerilee-defbutton ?k
+         :location (cons 245 5)
+         :size (cons 67 33)
+         :text "Click Here!"))
+
+
+File: cheerilee.info,  Node: Starting Applications,  Next: Events,  Prev: Defining Elements,  Up: Top
+
+5 Starting Applications
+***********************
+
+After defining a tree, you must use the following functions to actually
+begin running the application.
+
+ -- Function: cheerilee-add-tree tree
+     Adds TREE to the list of applications to display.  The system will
+     then periodically scan this list and update the display
+     accordingly.
+
+ -- Function: cheerilee-start-operations
+     This is the function that actually begin the execution.  It should
+     be always called when starting an application, after adding its
+     tree.
+
+
+File: cheerilee.info,  Node: Events,  Next: Index,  Prev: Starting Applications,  Up: Top
+
+6 Events
+********
+
+Currently, event handling is done by writing EIEIO methods (*note
+(eieio)Writing Methods::).  This chapter explains the basics to write
+methods associated with the kind of events handled by the system.
+
+* Menu:
+
+* Mouse Events::        Defining mouse event handlers.
+* Keyboard Events::     Defining keyboard events.
+
+
+File: cheerilee.info,  Node: Mouse Events,  Next: Keyboard Events,  Up: Events
+
+6.1 Mouse Events
+================
+
+Methods used to handle mouse events must have this signature:
+
+     (defmethod name (obj x y tree) body)
+
+   where NAME is the method name; OBJ is a reference to an element
+(*note (eieio)Methods:: for a deeper explanation); X and Y are
+coordinates; TREE is the application tree where the element calling this
+method is defined; BODY is the method body, that is, the set of
+instructions to execute when the method is called.
+
+   After defining a method, you can add it as a handler for two types of
+events:
+
+ -- Function: cheerilee-add-button-press-event tree id fun
+     This function associate FUN, a method, with _every_ element called
+     ID in TREE.  This method will be called when any mouse button is
+     pressed.
+
+     For example, calling
+
+          (cheerilee-add-button-press-event appl "ID" #'mouse-event-mehod)
+
+     will associate 'mouse-event-method' with every element called "ID"
+     inside 'appl'.
+
+ -- Function: cheerilee-add-button-release-event tree id fun
+     This function works the same as 'cheerilee-add-button-press-event',
+     with the difference that FUN is called when any mouse button is
+     released.
+
+
+File: cheerilee.info,  Node: Keyboard Events,  Prev: Mouse Events,  Up: Events
+
+6.2 Keyboard Events
+===================
+
+Methods used to handle keyboard events must have this signature:
+
+     (defmethod name (obj detail modifier) body)
+
+   where NAME is the method name; OBJ is a reference to an element
+(*note (eieio)Methods:: for a deeper explanation); DETAIL is the key
+value, as sent by the X server; MODIFIER is an additional key, like
+<CTRL> or <META>, used to change the overall key value; BODY is the
+method body, that is, the set of instructions to execute when the method
+is called.
+
+ -- Function: cheerilee-add-key-press-event tree id fun
+     This function associate FUN, a method, with _every_ element called
+     ID in TREE.  This method will be called when any keyboard button is
+     pressed.
+
+     For example, calling
+
+          (cheerilee-add-key-press-event appl "ID" #'keyboard-event-mehod)
+
+     will associate 'keyboard-event-method' with every element called
+     "ID" inside 'appl'.
+
+ -- Function: cheerilee-add-key-release-event tree id fun
+     This function works the same as 'cheerilee-add-key-press-event',
+     with the difference that FUN is called when any keyboard button is
+     released.
+
+
+File: cheerilee.info,  Node: Index,  Next: Functions,  Prev: Events,  Up: Top
+
+Concepts Index
+**************
+
+ [index ]
+* Menu:
+
+* Connecting to the server:              Connecting.            (line 6)
+* Define a button:                       Button.                (line 6)
+* Define a frame:                        Frame.                 (line 6)
+* Define a simple text element:          Text.                  (line 6)
+* Define a textbox:                      Textbox.               (line 6)
+* Define a window:                       Window.                (line 6)
+* Define the application's elements:     Defining Elements.     (line 6)
+* Handling Events:                       Events.                (line 6)
+* How to add a method to handle the keyboard: Keyboard Events.  (line 6)
+* How to add a method to handle the mouse: Mouse Events.        (line 6)
+* Installing the library:                Installation.          (line 6)
+* Overview:                              Overview.              (line 6)
+* Run an application after defining it:  Starting Applications. (line 6)
+* Some complete examples:                Examples.              (line 6)
+
+
+File: cheerilee.info,  Node: Functions,  Next: Variables,  Prev: Index,  Up: Top
+
+Functions Index
+***************
+
+ [index ]
+* Menu:
+
+* cheerilee-add-button-press-event:      Mouse Events.         (line 19)
+* cheerilee-add-button-release-event:    Mouse Events.         (line 31)
+* cheerilee-add-key-press-event:         Keyboard Events.      (line 17)
+* cheerilee-add-key-release-event:       Keyboard Events.      (line 29)
+* cheerilee-add-tree:                    Starting Applications.
+                                                               (line  9)
+* cheerilee-close-absolutely-everything: Connecting.           (line 22)
+* cheerilee-connect:                     Connecting.           (line 15)
+* cheerilee-defbutton:                   Button.               (line  9)
+* cheerilee-defframe:                    Frame.                (line 10)
+* cheerilee-deftext:                     Text.                 (line 10)
+* cheerilee-deftextbox:                  Textbox.              (line  9)
+* cheerilee-defwindow:                   Window.               (line 10)
+* cheerilee-process-alive-p:             Connecting.           (line 29)
+* cheerilee-start-operations:            Starting Applications.
+                                                               (line 14)
+
+
+File: cheerilee.info,  Node: Variables,  Prev: Functions,  Up: Top
+
+Variables Index
+***************
+
+ [index ]
+* Menu:
+
+* cheerilee-connection:                  Connecting.            (line 8)
+
+
+
+Tag Table:
+Node: Top293
+Node: Overview945
+Node: Installation1472
+Node: Connecting1795
+Node: Defining Elements2827
+Node: Frame3420
+Node: Window4509
+Node: Button6143
+Node: Text7196
+Node: Textbox7798
+Node: Examples8388
+Node: Starting Applications9577
+Node: Events10219
+Node: Mouse Events10649
+Node: Keyboard Events11904
+Node: Index13131
+Node: Functions14287
+Node: Variables15576
+
+End Tag Table

@@ -1,0 +1,443 @@
+\input texinfo @c -*- texinfo -*-
+@c %**start of header
+@setfilename cheerilee.info
+@settitle Cheerilee
+@c %**end of header
+
+@copying
+This manual is for the Cheerilee toolkit library.
+
+Copyright @copyright{} 2015-2106 Alessio Vanni
+@end copying
+
+@dircategory Emacs
+@direntry
+* Cheerilee: (cheerilee).       Graphical toolkit library
+@end direntry
+
+@titlepage
+@title Cheerilee
+@subtitle An X Window System toolkit library for Emacs
+@author Alessio Vanni (@email{vannilla@@airmail.cc})
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top Cheerilee
+@insertcopying
+@end ifnottex
+
+@menu
+* Overview::    A general introduction to the library.
+* Installation::  Getting it to work.
+* Connecting:: Starting and stopping the connection.
+* Defining Elements::     Creating the elements to display.
+* Starting Applications:: Running an application after defining it.
+* Events:: Handling different kinds of events.
+* Index::         Complete Index.
+* Functions::     A list of every function available.
+* Variables::     A list of every variable available.
+@end menu
+
+@node Overview
+@chapter Overview
+@cindex Overview
+Cheerilee is a graphical toolkit library written in Emacs Lisp.
+It allows Emacs to create graphical application, using the X11 protocol.
+
+Each application is defined by a tree of elements.
+Every element has a set of attributes, to specify e.g. the location
+of the element. @xref{Defining Elements}.
+
+The library also offers facilities to handle events, like
+keyboard inputs, or mouse clicks. @xref{Events}.
+
+@node Installation
+@chapter Installation
+@cindex Installing the library
+Installing the library is as simple as adding the directory
+to your @code{load-path}:
+
+@lisp
+(add-to-list 'load-path "/path/to/library")
+@end lisp
+
+After that, just @code{(require 'cheerilee)} to load all the symbols.
+
+@node Connecting
+@chapter Connecting
+@cindex Connecting to the server
+Before an application can run, Emacs needs to connect with the X server.
+
+@defvar cheerilee-connection
+This variable holds all the needed informations about the current connection.
+@end defvar
+
+The following functions control connections and disconnections with the server.
+
+@defun cheerilee-connect
+Start a connection between Emacs and the X server.
+The connection is done through a socket, so the server must run
+in the same machine as Emacs.
+
+The function also initializes event handling.
+@end defun
+
+@defun cheerilee-close-absolutely-everything
+Disconnects Emacs from the X server.
+
+Since the connection is closed, any running application is automatically
+closed, and any allocated resource is freed from memory.
+@end defun
+
+@defun cheerilee-process-alive-p
+Returns @code{nil} if there is no connection with the X server, otherwise
+it returns @code{t}.
+@end defun
+
+@node Defining Elements
+@chapter Defining Elements
+@cindex Define the application's elements
+To have a working application, you first need to define its structure.
+This is done by defining elements through specific macros.
+
+The following sections describe these macros:
+
+@menu
+* Frame::       The root window
+* Window::      A generic container
+* Button::      An element with text inside
+* Text::        Displaying a string
+* Textbox::     Inserting and manipulating text
+* Examples::    Complete examples of application trees.
+@end menu
+
+@node Frame
+@section Frame
+@cindex Define a frame
+A frame is a simple X window. Any other element is displayed inside
+this window, and, as such, it must be the root of the tree.
+The name comes from Emacs's frames (@pxref{(emacs)Frames}).
+
+@defmac cheerilee-defframe id &rest args-and-children
+@code{cheerilee-defframe} defines a new frame, using @var{id} as its name.
+@code{args-and-children} is a set of optional attribute definitions,
+followed by a set of children.
+
+The frame element's attributes are the following:
+
+@table @code
+@item :name
+The application's name, as displayed by the window manager.
+If not provided, it defaults to ``Application''.
+
+@item :background
+The frame's background color, as a string.
+If not provided, it defaults to ``white''.
+
+@item :size
+The frame's dimensions. The passed value must be a cons, defined
+either as
+
+@lisp
+'(@var{car} . @var{cdr})
+@end lisp
+
+or as
+
+@lisp
+(cons @var{car} @var{cdr})
+@end lisp
+
+@var{car} and @var{cdr} must be non-floating point numbers.
+@end table
+@end defmac
+
+@node Window
+@section Window
+@cindex Define a window
+A window is a generic rectangular area. It's purpose is to be a
+container for other elements.  The name comes from Emacs's windows
+(@pxref{(emacs)Windows}).
+
+@defmac cheerilee-defwindow id &rest args-and-children
+@code{cheerilee-defwindow} defines a new window, using @var{id} as its
+name.  @code{args-and-children} is a set of optional attribute
+definitions, followed by a set of children.
+
+The window element's attributes are the following:
+
+@table @code
+@item :location
+The location of the element inside its parent. The passed value must
+be a cons, defined either as
+
+@lisp
+'(@var{car} . @var{cdr})
+@end lisp
+
+or as
+
+@lisp
+(cons @var{car} @var{cdr})
+@end lisp
+
+@var{car} and @var{cdr} must be non-floating point numbers.
+
+The location is relative, so, for example, if the window is a
+inside of a frame, the value passed to the attribute is relative to (0 . 0),
+otherwise, if the window is inside another window located at (100 . 33),
+the actual location of this window is
+
+@lisp
+(cons (+ 100 @var{car}) (+ 33 @var{cdr}))
+@end lisp
+
+@item :size
+The window dimensions. The passed value must be a cons, defined either
+as
+
+@lisp
+'(@var{car} . @var{cdr})
+@end lisp
+
+or as
+
+@lisp
+(cons @var{car} @var{cdr})
+@end lisp
+
+@var{car} and @var{cdr} must be non-floating point numbers.
+
+@item :foreground
+The color used to draw the window's borders, as a string.
+If not provided, it defaults to ``black''.
+
+@item :line-width
+How much wide lines are drawn.
+@end table
+@end defmac
+
+@node Button
+@section Button
+@cindex Define a button
+The button element is a box with a string of text inside.
+Its purpose is to add basic user interactions to the application.
+
+@defmac cheerilee-defbutton id &rest args
+@code{cheerilee-defbutton} defines a new button, using @var{id} as its
+name. @code{args} is a set of optional attribute definitions.
+
+The attributes are the same of windows (@pxref{Window}), with the
+following attributes added:
+
+@table @code
+@item :background
+The color used as the text background, as a string. It is a good idea
+to keep it the same as the frame's background color, unless you want
+to highlight it. If not provided it defaults to ``white''.
+
+@item :font
+The font used to display text. It must be a valid X font name, as a string.
+If not provided, it defaults to ``7x14''.
+
+@item :text
+The actual text to be displayed inside the element. Needless to say,
+it must be a string.
+@end table
+@end defmac
+
+@node Text
+@section Text
+@cindex Define a simple text element
+The text element has the only purpose of showing a string without
+being bound by any relation (besides the parent-child given by the
+tree structure) with other elements.
+
+@defmac cheerilee-deftext id &rest args
+@code{cheerilee-deftext} defines a new text element, using @var{id} as
+its name. @code{args} is a set of optional attribute definitions.
+
+The attributes are the same as the button (@pxref{Button}), with the
+exception of the @code{:size} attribute, absent in the text element.
+@end defmac
+
+@node Textbox
+@section Textbox
+@cindex Define a textbox
+The textbox elements allows the user to insert and delete text inside it.
+Its main purpose is to get text inputs from the user.
+
+@defmac cheerilee-deftextbox id &rest args
+@code{cheerilee-deftextbox} defines a new textbox element, using @var{id} as
+its name. @code{args} is a set of optional attribute definitions.
+
+The attributes are the same as the button (@pxref{Button}).
+In this case, the @code{:text} field is used as the initial content of the
+textbox.
+@end defmac
+
+@node Examples
+@section Examples
+@cindex Some complete examples
+This section shows some complete trees examples.
+
+The following expression generates a frame with ID ``Frame''.
+This frame has a window inside, with ID ``0''.
+Finally, the window has the string ``This is an example'' inside, as
+an element with ID ``0.5''.
+
+@lisp
+(cheerilee-defframe "Frame"
+  :size (cons 640 480)
+  :name "Example 1"
+  (cheerilee-defwindow 0
+    :location (cons 10 5)
+    :size (cons 220 204)
+    (cheerilee-deftext 0.5
+      :text "This is an example"
+      :location (cons 30 25))))
+@end lisp
+
+The following expression generates a tree similar to the previous one,
+but now the frame has a second child, a button with ID ``?k''.
+
+@lisp
+(cheerilee-defframe "Frame"
+  :size (cons 640 480)
+  :name "Example 1"
+  (cheerilee-defwindow 0
+    :location (cons 10 5)
+    :size (cons 220 204)
+    (cheerilee-deftext 0.5
+      :text "This is an example"
+      :location (cons 30 25)))
+  (cheerilee-defbutton ?k
+    :location (cons 245 5)
+    :size (cons 67 33)
+    :text "Click Here!"))
+@end lisp
+
+@node Starting Applications
+@chapter Starting Applications
+@cindex Run an application after defining it
+After defining a tree, you must use the following functions to
+actually begin running the application.
+
+@defun cheerilee-add-tree tree
+Adds @var{tree} to the list of applications to display.  The system
+will then periodically scan this list and update the display
+accordingly.
+@end defun
+
+@defun cheerilee-start-operations
+This is the function that actually begin the execution.  It should be
+always called when starting an application, after adding its tree.
+@end defun
+
+@node Events
+@chapter Events
+@cindex Handling Events
+Currently, event handling is done by writing EIEIO methods
+(@pxref{(eieio)Writing Methods}).  This chapter explains the basics to
+write methods associated with the kind of events handled by the
+system.
+
+@menu
+* Mouse Events::        Defining mouse event handlers.
+* Keyboard Events::     Defining keyboard events.
+@end menu
+
+@node Mouse Events
+@section Mouse Events
+@cindex How to add a method to handle the mouse
+Methods used to handle mouse events must have this signature:
+
+@lisp
+(defmethod name (obj x y tree) body)
+@end lisp
+
+where @var{name} is the method name; @var{obj} is a reference to an
+element (@pxref{(eieio)Methods} for a deeper explanation); @var{x} and
+@var{y} are coordinates; @var{tree} is the application tree where the
+element calling this method is defined; @var{body} is the method body,
+that is, the set of instructions to execute when the method is called.
+
+After defining a method, you can add it as a handler for two types of events:
+
+@defun cheerilee-add-button-press-event tree id fun
+This function associate @var{fun}, a method, with @emph{every} element
+called @var{id} in @var{tree}.  This method will be called when any
+mouse button is pressed.
+
+For example, calling
+
+@lisp
+(cheerilee-add-button-press-event appl "ID" #'mouse-event-mehod)
+@end lisp
+
+will associate @code{mouse-event-method} with every element
+called ``ID'' inside @code{appl}.
+@end defun
+
+@defun cheerilee-add-button-release-event tree id fun
+This function works the same as
+@code{cheerilee-add-button-press-event}, with the difference that
+@var{fun} is called when any mouse button is released.
+@end defun
+
+@node Keyboard Events
+@section Keyboard Events
+@cindex How to add a method to handle the keyboard
+Methods used to handle keyboard events must have this signature:
+
+@lisp
+(defmethod name (obj detail modifier) body)
+@end lisp
+
+where @var{name} is the method name; @var{obj} is a reference to an
+element (@pxref{(eieio)Methods} for a deeper explanation);
+@var{detail} is the key value, as sent by the X server; @var{modifier}
+is an additional key, like @key{CTRL} or @key{META}, used to change
+the overall key value; @var{body} is the method body, that is, the set
+of instructions to execute when the method is called.
+
+@defun cheerilee-add-key-press-event tree id fun
+This function associate @var{fun}, a method, with @emph{every} element
+called @var{id} in @var{tree}.  This method will be called when any
+keyboard button is pressed.
+
+For example, calling
+
+@lisp
+(cheerilee-add-key-press-event appl "ID" #'keyboard-event-mehod)
+@end lisp
+
+will associate @code{keyboard-event-method} with every element called
+``ID'' inside @code{appl}.
+@end defun
+
+@defun cheerilee-add-key-release-event tree id fun
+This function works the same as @code{cheerilee-add-key-press-event},
+with the difference that @var{fun} is called when any keyboard button
+is released.
+@end defun
+
+@node Index
+@unnumbered Concepts Index
+@printindex cp
+
+@node Functions
+@unnumbered Functions Index
+@printindex fn
+
+@node Variables
+@unnumbered Variables Index
+@printindex vr
+
+@bye
