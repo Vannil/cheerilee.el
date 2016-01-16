@@ -18,5 +18,5 @@ load it:
 
 `(require 'cheerilee)`.
 
-There's a Quick Start guide inside cheerilee.el
-
+There's a Quick Start guide inside cheerilee.el, or you can read
+the Texinfo documentation in cheerilee.info.
