@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2015 Alessio Vanni
 
-;; Author: Alessio Vanni
+;; Author: Alessio Vanni <vannilla@airmail.cc>
 ;; Created: November 2015
 ;; Version: 0.1
 ;; Keywords: multimedia tools
