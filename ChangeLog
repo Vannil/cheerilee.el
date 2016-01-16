@@ -1,3 +1,9 @@
+2016-01-16  Alessio Vanni  <vannilla@airmail.cc>
+
+	* cheerilee-handle.el: Keyboard Handling
+	Added new argument to event handlers.
+	Fixed documentation in the same functions.
+
 2016-01-14  Alessio Vanni  <vannilla@airmail.cc>
 
 	* cheerilee-core.el: Changed Connection Handling
