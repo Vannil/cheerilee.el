@@ -12,8 +12,11 @@ It uses the [XELB](https://github.com/ch11ng/xelb) library to
 communicate with the X server.
 
 To use it, add it to your load path:
- `(add-to-list 'load-path"/path/to/library)`, then you must
-load it: `(require 'cheerilee)`.
+
+`(add-to-list 'load-path "/path/to/library")`, then you must
+load it:
+
+`(require 'cheerilee)`.
 
 There's a Quick Start guide inside cheerilee.el
 
