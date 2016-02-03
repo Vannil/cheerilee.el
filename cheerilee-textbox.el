@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2015 Alessio Vanni
 
-;; Author: Alessio Vanni <vannilla@airmail.cc>
+;; Author: Alessio Vanni <vannilla@firemail.cc>
 ;; Created: December 2015
 
 ;; This file is not part of GNU Emacs.

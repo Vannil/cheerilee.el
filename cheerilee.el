@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2015 Alessio Vanni
 
-;; Author: Alessio Vanni <vannilla@airmail.cc>
+;; Author: Alessio Vanni <vannilla@firemail.cc>
 ;; Created: November 2015
 ;; Version: 0.1
 ;; Keywords: multimedia tools
@@ -57,7 +57,7 @@
 ;; 'cheerilee-add-' and ends in '-event'. Anything inside describes
 ;; the handled event.
 ;;
-;; The function 'cheerilee-close-absolutely-everything' disconnects Emacs
+;; The function `cheerilee-close-absolutely-everything' disconnects Emacs
 ;; from the X server, meaning that every application using this library
 ;; will be closed.
 ;;
@@ -67,7 +67,7 @@
 ;; the whole library.
 ;;
 ;; Until that bug is fixed, it's a good idea to call
-;; 'cheerilee-process-alive-p' and 'cheerilee-close-absolutely-everything'
+;; `cheerilee-process-alive-p' and `cheerilee-close-absolutely-everything'
 ;; if the former returns t.
 
 ;;; Code:

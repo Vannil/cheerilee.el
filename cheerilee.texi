@@ -18,7 +18,7 @@ Copyright @copyright{} 2015-2106 Alessio Vanni
 @titlepage
 @title Cheerilee
 @subtitle An X Window System toolkit library for Emacs
-@author Alessio Vanni (@email{vannilla@@airmail.cc})
+@author Alessio Vanni (@email{vannilla@@firemail.cc})
 @page
 @vskip 0pt plus 1filll
 @insertcopying
