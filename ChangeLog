@@ -1,3 +1,9 @@
+2016-02-04  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-handle.el: Handlers Definition
+	Added a macro to automatically define the handler
+	with the correct arguments.
+
 2016-01-16  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-handle.el: Keyboard Handling
