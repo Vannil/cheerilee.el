@@ -197,6 +197,37 @@ actual value."
   (dolist (el (oref ctrl key-release))
     (funcall el ctrl detail modifier)))
 
+(defmacro cheerilee-defevent (name type class &optional docstring &rest body)
+  "Define a new event handler.
+
+NAME is the handler's name.
+
+TYPE is one of the following (unquoted) symbols:
+button-press    - for mouse button press events
+button-release  - for mouse button release events
+key-press       - for keyboard button press events
+key-release     - for keyboard button release events
+
+CLASS is the type of element this event associates to.
+The most generic type is `cheerilee-control'.
+
+DOCSTRING is a string used as documentation when calling
+Emacs's help functions.
+
+BODY is the sequence of instructions to execute when calling the event."
+  (declare (debug (form body))
+	   (indent defun)
+	   (doc-string 4))
+  (if docstring (setq body (cons docstring body)))
+  (cond ((or (eq type 'button-press) (eq type 'button-release))
+	 `(defmethod ,name ((this ,class) x y detail tree)
+	    ,@body))
+	((or (eq type 'key-press) (eq type 'key-release))
+	 `(defmethod ,name ((this ,class) detail modifier)
+	    ,@body))
+	(t
+	 (error "Invalid event type"))))
+
 (provide 'cheerilee-handle)
 
 ;;; cheerilee-handle.el ends here
