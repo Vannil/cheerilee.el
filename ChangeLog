@@ -1,3 +1,8 @@
+2016-02-08  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-clear.el: New File
+	Reorganized a bit where functions are placed.
+
 2016-02-04  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-handle.el: Handlers Definition
