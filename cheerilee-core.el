@@ -48,9 +48,6 @@
 (defvar cheerilee--fonts-alist ()
   "Alist of opened fonts.")
 
-(defvar cheerilee--clear-delay 0
-  "Delay between clear-area calls.")
-
 ;;;###autoload
 (defun cheerilee-connect ()
   "Connect to the X Server."
@@ -156,27 +153,6 @@ the connection open."
       (setq tree (delq nil tree))
       (dolist (el l)
 	(cheerilee-remove-element el id)))))
-
-(defun cheerilee-clear-area (frame &optional x y width height)
-  "Clear the area inside FRAME and generate a new Expose event.
-
-X and Y, if provided, are the starting point of the region to
-clear.  WIDTH and HEIGHT, if provided, are the dimensions of the region
-to clear."
-  (let ((dx (if x x 0))
-	(dy (if y y 0))
-	(w (if width width (car (oref (nth 1 frame) size))))
-	(h (if height height (cdr (oref (nth 1 frame) size)))))
-    (xcb:+request cheerilee-connection
-	(make-instance 'xcb:ClearArea
-		       :exposures 1
-		       :window (nth 2 frame)
-		       :x dx :y dy
-		       :width w
-		       :height h))
-    (dolist (el (cheerilee-get-element-list))
-      (cheerilee--display-tree el))
-    (xcb:flush cheerilee-connection)))
 
 (defsubst cheerilee-get-display ()
   "Return the ID associated with the display."
