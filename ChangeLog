@@ -1,5 +1,9 @@
 2016-02-08  Alessio Vanni  <vannilla@firemail.cc>
 
+	* cheerilee-handle.el: Initializing events
+	Initializing event handling is not done automatically
+	when connecting anymore, but has to be done manually.
+
 	* cheerilee-clear.el: New File
 	Reorganized a bit where functions are placed.
 
