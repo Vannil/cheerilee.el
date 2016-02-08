@@ -345,6 +345,12 @@ will then periodically scan this list and update the display
 accordingly.
 @end defun
 
+@defun cheerilee-initialize-events
+Initialize event handling for every application.
+It should be always called before running an application, so that
+events are properly handled.
+@end defun
+
 @defun cheerilee-start-operations
 This is the function that actually begin the execution.  It should be
 always called when starting an application, after adding its tree.
@@ -353,45 +359,84 @@ always called when starting an application, after adding its tree.
 @node Events
 @chapter Events
 @cindex Handling Events
-Currently, event handling is done by writing EIEIO methods
-(@pxref{(eieio)Writing Methods}).  This chapter explains the basics to
-write methods associated with the kind of events handled by the
-system.
+Event handlers are special functions, associated with an element of
+the application, and called automatically when the X server sends
+an event to the application.
+
+You can define a handler using the following macro:
+
+@defmac cheerilee-defevent name type class [docstring] body@enddots{}
+This macro defines an event handler called @var{name}.
+
+@var{type} is one of the following unquoted symbols:
+@code{button}; @code{keyboard}; @code{motion}.
+The following sections will explain their meaning.
+
+@var{class} is the type of element this handler will be applied to.
+It is used to associate different handlers for the same event to
+different elements. For example, a button reacts differently than a
+textbox to mouse clicks.
+The class of an element can be derived by prefixing @code{cheerilee-}
+to the element type, e.g. use @code{cheerilee-window} to associate the handler
+to windows (@pxref{Window}).
+
+The optional argument @var{docstring} is the same as in @code{defun}
+or @code{defmacro}: a string used by Emacs's help functions.
+
+The macro exposes some hidden variables, listed in the following sections,
+so make sure not to call any variable you define in the body with the same name.
+@end defmac
 
 @menu
-* Mouse Events::        Defining mouse event handlers.
+* Mouse Button Events:: Defining mouse button event handlers.
 * Keyboard Events::     Defining keyboard events.
+* Motion Events::       Defining motion events.
 @end menu
 
-@node Mouse Events
-@section Mouse Events
-@cindex How to add a method to handle the mouse
-Methods used to handle mouse events must have this signature:
+@node Mouse Button Events
+@section Mouse Button Events
+@cindex How to add a function to handle the mouse buttons
+Mouse event handlers are defined by giving @code{button} to
+@code{cheerilee-defevent}.
 
-@lisp
-(defmethod name (obj x y tree) body)
-@end lisp
+In this case, the macro exposes the following variables:
 
-where @var{name} is the method name; @var{obj} is a reference to an
-element (@pxref{(eieio)Methods} for a deeper explanation); @var{x} and
-@var{y} are coordinates; @var{tree} is the application tree where the
-element calling this method is defined; @var{body} is the method body,
-that is, the set of instructions to execute when the method is called.
+@defvar this
+The element that received the event.
+@end defvar
 
-After defining a method, you can add it as a handler for two types of events:
+@defvar x
+Where the event is located horizontally, starting from the top-left
+corner of the application frame and going right.
+@end defvar
+
+@defvar y
+Where the event is located vertically, starting from the top-left
+corner of the application frame and going down.
+@end defvar
+
+@defvar detail
+The button pressed, as a number.
+@end defvar
+
+@defvar tree
+The application that received the event.
+@end defvar
+
+After defining the handler, you can use it for two types of events:
 
 @defun cheerilee-add-button-press-event tree id fun
-This function associate @var{fun}, a method, with @emph{every} element
+This function associate @var{fun}, an event handler, with @emph{every} element
 called @var{id} in @var{tree}.  This method will be called when any
 mouse button is pressed.
 
 For example, calling
 
 @lisp
-(cheerilee-add-button-press-event appl "ID" #'mouse-event-mehod)
+(cheerilee-add-button-press-event appl "ID" #'mouse-event-function)
 @end lisp
 
-will associate @code{mouse-event-method} with every element
+will associate @code{mouse-event-function} with every element
 called ``ID'' inside @code{appl}.
 @end defun
 
@@ -403,32 +448,39 @@ This function works the same as
 
 @node Keyboard Events
 @section Keyboard Events
-@cindex How to add a method to handle the keyboard
-Methods used to handle keyboard events must have this signature:
+@cindex How to add a function to handle the keyboard
+Keyboard event handlers are defined by giving @code{keyboard} to
+@code{cheerilee-defevent}.
 
-@lisp
-(defmethod name (obj detail modifier) body)
-@end lisp
+In this case, the macro exposes the following variables:
 
-where @var{name} is the method name; @var{obj} is a reference to an
-element (@pxref{(eieio)Methods} for a deeper explanation);
-@var{detail} is the key value, as sent by the X server; @var{modifier}
-is an additional key, like @key{CTRL} or @key{META}, used to change
-the overall key value; @var{body} is the method body, that is, the set
-of instructions to execute when the method is called.
+@defvar this
+The element that received the event.
+@end defvar
+
+@defvar detail
+The button pressed, as a number.
+@end defvar
+
+@defvar modifier
+Any special button pressed together with @code{detail}, like @key{CTRL} or
+@key{META}.
+@end defvar
+
+After defining the handler, you can use it for two types of events:
 
 @defun cheerilee-add-key-press-event tree id fun
-This function associate @var{fun}, a method, with @emph{every} element
+This function associate @var{fun}, an event handler, with @emph{every} element
 called @var{id} in @var{tree}.  This method will be called when any
 keyboard button is pressed.
 
 For example, calling
 
 @lisp
-(cheerilee-add-key-press-event appl "ID" #'keyboard-event-mehod)
+(cheerilee-add-key-press-event appl "ID" #'keyboard-event-function)
 @end lisp
 
-will associate @code{keyboard-event-method} with every element called
+will associate @code{keyboard-event-function} with every element called
 ``ID'' inside @code{appl}.
 @end defun
 
@@ -436,6 +488,48 @@ will associate @code{keyboard-event-method} with every element called
 This function works the same as @code{cheerilee-add-key-press-event},
 with the difference that @var{fun} is called when any keyboard button
 is released.
+@end defun
+
+@node Motion Events
+@section Motion Events
+@cindex How to add a function to handle mouse motion events
+Motion event handlers are defined by giving @code{motion} to
+@code{cheerilee-defevent}.
+
+In this case, the macro exposes the following variables:
+
+@defvar this
+The element that received the event.
+@end defvar
+
+@defvar x
+Where the event is located horizontally, starting from the top-left
+corner of the application frame and going right.
+@end defvar
+
+@defvar y
+Where the event is located vertically, starting from the top-left
+corner of the application frame and going down.
+@end defvar
+
+@defvar tree
+The application that received the event.
+@end defvar
+
+After defining the handler, you can use it with
+
+@defun cheerilee-add-motion-event tree id fun
+This function associate @var{fun}, an event handler, with @emph{every} element
+called @var{id} in @var{tree}.  This method will be called when the mouse moves.
+
+For example, calling
+
+@lisp
+(cheerilee-add-motionevent appl "ID" #'motion-event-function)
+@end lisp
+
+will associate @code{motion-event-function} with every element called
+``ID'' inside @code{appl}.
 @end defun
 
 @node GNU Free Documentation License
