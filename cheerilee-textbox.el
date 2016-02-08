@@ -27,6 +27,7 @@
 ;;; Code:
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
+(require 'cheerilee-clear)
 
 (defconst cheerilee-keycode-backspace 22
   "The value of the keycode associated with backspace.")

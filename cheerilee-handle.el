@@ -26,6 +26,7 @@
 ;;; Code:
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
+(require 'cheerilee-clear)
 
 ;; Behold the heavy copy&paste used here!
 

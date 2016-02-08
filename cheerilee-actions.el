@@ -26,6 +26,8 @@
 ;;; Code:
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
+(require 'cheerilee-clear)
+(require 'cheerilee-display)
 
 (defmethod cheerilee-move-control ((window cheerilee-window) dx dy)
   "Move WINDOW, with DX and DY as the distance from current location.
@@ -91,7 +93,7 @@ to the X11 specifications."
   (let ((l (oref ctrl location))
 	(s (oref ctrl size)))
   (cheerilee-clear-area
-   (cheerilee-get-frame (oref ctrl frame) (cheerile-get-element-list))
+   (cheerilee-get-frame (oref ctrl frame) (cheerilee-get-element-list))
    (car l) (cdr l) (car s) (cdr s))))
 
 (defmethod cheerilee-change-text-content ((ctrl cheerilee-window) new)
