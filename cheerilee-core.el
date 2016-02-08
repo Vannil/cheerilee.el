@@ -58,22 +58,6 @@
 	   (lscr (list (oref screen root) (oref screen root-visual))))
       (setq cheerilee--model-tree (list (list 'display lscr))))
     (xcb:keysyms:init cheerilee-connection)
-    (xcb:+event cheerilee-connection
-		'xcb:Expose #'cheerilee-expose-event)
-    (xcb:+event cheerilee-connection
-		'xcb:DestroyNotify #'cheerilee-destroy-window-event)
-    (xcb:+event cheerilee-connection
-		'xcb:ConfigureNotify #'cheerilee-configure-notify-event)
-    (xcb:+event cheerilee-connection
-	    'xcb:ButtonPress #'cheerilee-button-press-event)
-    (xcb:+event cheerilee-connection
-		'xcb:ButtonRelease #'cheerilee-button-release-event)
-    (xcb:+event cheerilee-connection
-		'xcb:KeyPress #'cheerilee-key-press-event)
-    (xcb:+event cheerilee-connection
-		'xcb:KeyRelease #'cheerilee-key-release-event)
-    (xcb:+event cheerilee-connection
-		'xcb:KeyRelease #'cheerilee-motion-notify-event)
     ;; Apparently, Emacs tries to close all processes before running
     ;; `kill-emacs-hook'. This is incovenient, because closing Emacs
     ;; before disconnecting will always prompt the user.

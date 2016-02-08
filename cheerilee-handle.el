@@ -28,6 +28,26 @@
 (require 'cheerilee-core)
 (require 'cheerilee-clear)
 
+;;;###autoload
+(defun cheerilee-initialize-events ()
+  "Initialize event handling."
+  (xcb:+event cheerilee-connection
+	      'xcb:Expose #'cheerilee-expose-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:DestroyNotify #'cheerilee-destroy-window-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:ConfigureNotify #'cheerilee-configure-notify-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:ButtonPress #'cheerilee-button-press-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:ButtonRelease #'cheerilee-button-release-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:KeyPress #'cheerilee-key-press-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:KeyRelease #'cheerilee-key-release-event)
+  (xcb:+event cheerilee-connection
+	      'xcb:KeyRelease #'cheerilee-motion-notify-event))
+
 ;; Behold the heavy copy&paste used here!
 
 (defun cheerilee-configure-notify-event (data fake)
