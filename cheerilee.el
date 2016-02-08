@@ -76,6 +76,7 @@
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
 (require 'cheerilee-display)
+(require 'cheerilee-clear)
 (require 'cheerilee-destroy)
 (require 'cheerilee-handle)
 (require 'cheerilee-definitions)
