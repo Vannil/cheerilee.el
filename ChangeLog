@@ -3,6 +3,8 @@
 	* cheerilee-handle.el: Initializing events
 	Initializing event handling is not done automatically
 	when connecting anymore, but has to be done manually.
+	(cheerilee-defevent): New event type, also different
+	type symbols.
 
 	* cheerilee-clear.el: New File
 	Reorganized a bit where functions are placed.
