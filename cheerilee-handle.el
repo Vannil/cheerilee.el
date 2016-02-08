@@ -26,27 +26,31 @@
 ;;; Code:
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
+(require 'cheerilee-display)
 (require 'cheerilee-clear)
+(require 'cheerilee-destroy)
 
 ;;;###autoload
 (defun cheerilee-initialize-events ()
   "Initialize event handling."
-  (xcb:+event cheerilee-connection
-	      'xcb:Expose #'cheerilee-expose-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:DestroyNotify #'cheerilee-destroy-window-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:ConfigureNotify #'cheerilee-configure-notify-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:ButtonPress #'cheerilee-button-press-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:ButtonRelease #'cheerilee-button-release-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:KeyPress #'cheerilee-key-press-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:KeyRelease #'cheerilee-key-release-event)
-  (xcb:+event cheerilee-connection
-	      'xcb:KeyRelease #'cheerilee-motion-notify-event))
+  (when (and cheerilee-connection
+	     (not cheerilee-event-initialized))
+    (xcb:+event cheerilee-connection
+		'xcb:Expose #'cheerilee-expose-event)
+    (xcb:+event cheerilee-connection
+		'xcb:DestroyNotify #'cheerilee-destroy-window-event)
+    (xcb:+event cheerilee-connection
+		'xcb:ConfigureNotify #'cheerilee-configure-notify-event)
+    (xcb:+event cheerilee-connection
+		'xcb:ButtonPress #'cheerilee-button-press-event)
+    (xcb:+event cheerilee-connection
+		'xcb:ButtonRelease #'cheerilee-button-release-event)
+    (xcb:+event cheerilee-connection
+		'xcb:KeyPress #'cheerilee-key-press-event)
+    (xcb:+event cheerilee-connection
+		'xcb:KeyRelease #'cheerilee-key-release-event)
+    (xcb:+event cheerilee-connection
+		'xcb:KeyRelease #'cheerilee-motion-notify-event)))
 
 ;; Behold the heavy copy&paste used here!
 
@@ -224,10 +228,9 @@ actual value."
 NAME is the handler's name.
 
 TYPE is one of the following (unquoted) symbols:
-button-press    - for mouse button press events
-button-release  - for mouse button release events
-key-press       - for keyboard button press events
-key-release     - for keyboard button release events
+button     - for mouse button events
+keyboard   - for keyboard events
+motion     - for mouse motion events
 
 CLASS is the type of element this event associates to.
 The most generic type is `cheerilee-control'.
@@ -240,11 +243,14 @@ BODY is the sequence of instructions to execute when calling the event."
 	   (indent defun)
 	   (doc-string 4))
   (if docstring (setq body (cons docstring body)))
-  (cond ((or (eq type 'button-press) (eq type 'button-release))
+  (cond ((eq type 'button)
 	 `(defmethod ,name ((this ,class) x y detail tree)
 	    ,@body))
-	((or (eq type 'key-press) (eq type 'key-release))
+	((eq type 'keyboard)
 	 `(defmethod ,name ((this ,class) detail modifier)
+	    ,@body))
+	((eq type 'motion)
+	 `(defmethod ,name ((this ,class) x y tree)
 	    ,@body))
 	(t
 	 (error "Invalid event type"))))

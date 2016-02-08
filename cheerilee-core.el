@@ -48,6 +48,9 @@
 (defvar cheerilee--fonts-alist ()
   "Alist of opened fonts.")
 
+(defvar cheerilee-event-initialized nil
+  "If event handling was initialized."
+
 ;;;###autoload
 (defun cheerilee-connect ()
   "Connect to the X Server."
@@ -79,7 +82,8 @@ Every application using this library will be closed as a consequence."
 	(xcb:flush cheerilee-connection)
 	(xcb:disconnect cheerilee-connection))
   (setq cheerilee--fonts-alist nil)
-  (setq cheerilee-connection nil))
+  (setq cheerilee-connection nil)
+  (setq cheerilee-event-initialized nil))
 
 ;;;###autoload
 (defun cheerilee-start-operations ()
