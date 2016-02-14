@@ -49,7 +49,7 @@
   "Alist of opened fonts.")
 
 (defvar cheerilee-event-initialized nil
-  "If event handling was initialized."
+  "If event handling was initialized.")
 
 ;;;###autoload
 (defun cheerilee-connect ()
