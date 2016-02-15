@@ -7,6 +7,7 @@
 ;; Version: 0.1
 ;; Keywords: multimedia tools
 ;; Package-Requires: ((xelb "0.1"))
+;; URL: https://github.com/Vannil/cheerilee.el
 
 ;; This file is not part of GNU Emacs.
 
