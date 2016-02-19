@@ -4,7 +4,7 @@
 
 ;; Author: Alessio Vanni <vannilla@firemail.cc>
 ;; Created: November 2015
-;; Version: 0.1
+;; Version: 0.2
 ;; Keywords: multimedia tools
 ;; Package-Requires: ((xelb "0.1"))
 ;; URL: https://github.com/Vannil/cheerilee.el
