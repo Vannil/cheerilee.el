@@ -117,33 +117,6 @@ the connection open."
   "Make TREE visible to the rendering operations."
   (nconc cheerilee--model-tree tree))
 
-;;;###autoload
-(defun cheerilee-add-to-element (tree id new)
-  "Add to the element of TREE called ID the element NEW as a child."
-  (when (and tree
-	     (listp tree)
-	     (listp (car tree)))
-    (let ((al (car tree))
-	  (dl (cdr tree)))
-      (cheerilee-add-to-element (nthcdr 4 al) id new)
-      (when (equal (nth 3 al) id)
-	(setf (nthcdr 4 al) (append (nthcdr 4 al) (list new))))
-      (cheerilee-add-to-element dl id new))))
-
-;;;###autoload
-(defun cheerilee-remove-element (tree id)
-  "Remove _all_ elements from TREE named ID."
-  (when (and tree
-	     (listp tree))
-    (let ((l (nthcdr 4 tree)))
-      (dotimes (i (length l))
-	(when (equal (nth 3 (nth i l)) id)
-	  (cheerilee--apply-dispose (list (nth i l)))
-	  (setf (nth i l) nil)))
-      (setq tree (delq nil tree))
-      (dolist (el l)
-	(cheerilee-remove-element el id)))))
-
 (defsubst cheerilee-get-display ()
   "Return the ID associated with the display."
   (cadar cheerilee--model-tree))
