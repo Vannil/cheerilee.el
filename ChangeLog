@@ -1,5 +1,8 @@
 2016-02-19  Alessio Vanni  <vannilla@firemail.cc>
 
+	* cheerilee-actions.el: Moved Functions
+	Reorganized functions due to a circular dependency.
+
 	* cheerilee-core.el (cheerilee--get-color): Changed Function
 	Changed the way the function calculates the color value.
 	Now it returns the actual color.
