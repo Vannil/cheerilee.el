@@ -54,7 +54,7 @@
 
 ;; Behold the heavy copy&paste used here!
 
-(defun cheerilee-configure-notify-event (data fake)
+(defun cheerilee-configure-notify-event (data &optional fake)
     "Event triggered when something happens to the frame.
 
 As an event, it associates DATA with a new instance of the correct event.
@@ -72,7 +72,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	    (cheerilee-clear-area fr)
 	    (setq cheerilee--clear-delay 0))))))
 
-(defun cheerilee-motion-notify-event (data fake)
+(defun cheerilee-motion-notify-event (data &optional fake)
   "Event triggered when the mouse cursor moves.
 
 As an event, it associates DATA with a new instance of the correct event.
@@ -83,10 +83,10 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (event event-x event-y) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
-	(cheerilee--apply-function fr #'cheerilee--motion-notify
+	(cheerilee--apply-function lst #'cheerilee--motion-notify
 				   event-x event-y fr)))))
 
-(defun cheerilee-button-press-event (data fake)
+(defun cheerilee-button-press-event (data &optional fake)
     "Event triggered when a mouse button is pressed.
 
 As an event, it associates DATA with a new instance of the correct event.
@@ -97,10 +97,10 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (detail event event-x event-y) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
-	(cheerilee--apply-function fr #'cheerilee--button-press
+	(cheerilee--apply-function lst #'cheerilee--button-press
 				   event-x event-y detail fr)))))
 
-(defun cheerilee-button-release-event (data fake)
+(defun cheerilee-button-release-event (data &optional fake)
   "Event triggered when a mouse button is released.
 
 As an event, it associates DATA with a new instance of the correct event.
@@ -114,7 +114,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	(cheerilee--apply-function lst #'cheerilee--button-release
 				   event-x event-y detail fr)))))
 
-(defun cheerilee-key-press-event (data fake)
+(defun cheerilee-key-press-event (data &optional fake)
   "Event triggered when a keyboard button is pressed.
 
 As an event, it associates DATA with a new instance of the correct event.
@@ -127,7 +127,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	(cheerilee--apply-function lst #'cheerilee--key-press
 				   detail state)))))
 
-(defun cheerilee-key-release-event (data fake)
+(defun cheerilee-key-release-event (data &optional fake)
     "Event triggered when a keyboard button is released.
 
 As an event, it associates DATA with a new instance of the correct event.
@@ -190,7 +190,7 @@ application in which the event happened."
 	       (null (oref ctrl capture)))
       (oset ctrl capture t)
       (dolist (el (oref ctrl button-press))
-	(funcall el ctrl detail x y (list tree))))))
+	(funcall el ctrl x y detail (list tree))))))
 
 (defmethod cheerilee--button-release ((ctrl cheerilee-control) x y detail tree)
   "Execute CTRL's Mouse Button Release handling functions.
@@ -204,7 +204,7 @@ application in which the event happened."
     (when (and (<= (nth 0 cr) x (+ (nth 0 cr) (nth 2 cr)))
 	       (<= (nth 1 cr) y (+ (nth 1 cr) (nth 3 cr))))
       (dolist (el (oref ctrl button-rel))
-	(funcall el ctrl detail x y (list tree))))))
+	(funcall el ctrl x y detail (list tree))))))
 
 (defmethod cheerilee--key-press ((ctrl cheerilee-control) detail modifier)
   "Execute CTRL's Keyboard Button Press handling functions.

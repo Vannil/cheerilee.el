@@ -32,7 +32,7 @@
 
 ;; There is a lot of copy&paste here, beware!
 
-(defun cheerilee-expose-event (data fake)
+(defun cheerilee-expose-event (data &optional fake)
   "Render each control defined in `cheerilee--model-tree' on the screen.
 
 As an event, it associate DATA with a new instance of the correct event.

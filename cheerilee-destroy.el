@@ -28,7 +28,7 @@
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
 
-(defun cheerilee-destroy-window-event (data fake)
+(defun cheerilee-destroy-window-event (data &optional fake)
   "Event triggered when a frame is closed.
 
 As an event, it associate DATA with a new instance of the correct event.

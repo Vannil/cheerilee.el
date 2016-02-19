@@ -59,7 +59,7 @@ handlers for this type of events."
 	(progn
 	  (cheerilee--select-textbox box)
 	  (dolist (el (oref box button-rel))
-	    (funcall el box detail)))
+	    (funcall el box x y detail (list tree))))
       (cheerilee--unselect-textbox box))))
 
 (defmethod cheerilee--select-textbox ((box cheerilee-textbox))
