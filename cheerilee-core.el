@@ -152,11 +152,13 @@ the connection open."
 
 (defun cheerilee--get-color (name)
   "Return the value of the color specified by NAME."
-  (let ((v (color-values name)))
-    (let ((r (nth 0 v))
-	  (g (nth 1 v))
-	  (b (nth 2 v)))
-      (logxor (lsh r 32) (lsh g 16) b))))
+  (let* ((color (mapcar #'float (color-values name)))
+	 (white (mapcar #'float (color-values "white")))
+	 (hex (color-rgb-to-hex
+	       (/ (nth 0 color) (nth 0 white))
+	       (/ (nth 1 color) (nth 1 white))
+	       (/ (nth 2 color) (nth 2 white)))))
+    (string-to-number (substring hex 1) 16)))
 
 (defun cheerilee-get-frame (id list)
   "Return the frame with ID as the associated X11 id.
