@@ -26,6 +26,8 @@
 ;; It also defines functions for user interaction.
 
 ;;; Code:
+(require 'color)
+
 (defvar cheerilee-connection nil
   "Connection with the X Server.")
 
@@ -91,7 +93,7 @@ Every application using this library will be closed as a consequence."
   (let ((l (cheerilee-get-element-list)))
     (cheerilee--open-all-fonts l)
     (xcb:flush cheerilee-connection)
-    (dotimes (i 2)
+    (dotimes (i 2 i)
       (dolist (el l)
 	(cheerilee--display-tree el))
       (xcb:flush cheerilee-connection))
