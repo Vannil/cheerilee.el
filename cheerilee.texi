@@ -467,6 +467,10 @@ Any special button pressed together with @code{detail}, like @key{CTRL} or
 @key{META}.
 @end defvar
 
+@defvar tree
+The application that received the event.
+@end defvar
+
 After defining the handler, you can use it for two types of events:
 
 @defun cheerilee-add-key-press-event tree id fun

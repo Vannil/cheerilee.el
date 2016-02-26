@@ -128,9 +128,9 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (detail event state) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
-	(cheerilee--key-press (nth 1 fr) detail state)
+	(cheerilee--key-press (nth 1 fr) detail state fr)
 	(cheerilee--apply-function lst #'cheerilee--key-press
-				   detail state)))))
+				   detail state fr)))))
 
 (defun cheerilee-key-release-event (data &optional fake)
     "Event triggered when a keyboard button is released.
@@ -143,9 +143,9 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (detail event state) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
-	(cheerilee--key-release (nth 1 fr) detail state)
+	(cheerilee--key-release (nth 1 fr) detail state fr)
 	(cheerilee--apply-function lst #'cheerilee--key-release
-				   detail state)))))
+				   detail state fr)))))
 
 (defun cheerilee-add-motion-event (tree id fun)
   "Associate to each element of TREE called ID the function FUN."
@@ -213,7 +213,7 @@ application in which the event happened."
       (dolist (el (oref ctrl button-rel))
 	(funcall el ctrl x y detail (list tree))))))
 
-(defmethod cheerilee--key-press ((ctrl cheerilee-control) detail modifier)
+(defmethod cheerilee--key-press ((ctrl cheerilee-control) detail modifier tree)
   "Execute CTRL's Keyboard Button Press handling functions.
 
 DETAIL is the key pressed, MODIFIER any additional key that can chage the
@@ -221,7 +221,7 @@ actual value."
   (dolist (el (oref ctrl key-press))
     (funcall el ctrl detail modifier)))
 
-(defmethod cheerilee--key-release ((ctrl cheerilee-control) detail modifier)
+(defmethod cheerilee--key-release ((ctrl cheerilee-control) detail modifier tree)
     "Execute CTRL's Keyboard Button Release handling functions.
 
 DETAIL is the key released, MODIFIER any additional key that can chage the
