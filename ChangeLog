@@ -1,3 +1,8 @@
+2016-02-26  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-handle.el: Better Handling
+	Frames now can handle events like any other element.
+
 2016-02-19  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-actions.el: Moved Functions
