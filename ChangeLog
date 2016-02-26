@@ -2,6 +2,8 @@
 
 	* cheerilee-handle.el: Better Handling
 	Frames now can handle events like any other element.
+	Keyboard events now pass the application tree to
+	the handlers.
 
 2016-02-19  Alessio Vanni  <vannilla@firemail.cc>
 
