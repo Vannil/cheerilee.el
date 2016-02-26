@@ -83,6 +83,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (event event-x event-y) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
+	(cheerilee--motion-notify (nth 1 fr) event-x event-y fr)
 	(cheerilee--apply-function lst #'cheerilee--motion-notify
 				   event-x event-y fr)))))
 
@@ -97,6 +98,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (detail event event-x event-y) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
+	(cheerilee--button-press (nth 1 fr) event-x event-y detail fr)
 	(cheerilee--apply-function lst #'cheerilee--button-press
 				   event-x event-y detail fr)))))
 
@@ -106,11 +108,12 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 As an event, it associates DATA with a new instance of the correct event.
 FAKE is used to determine if the event
 is synthetic (i.e. sent with the function `xcb:SendEvent')."
-  (let ((ev (make-instance 'xcb:ButtonPress)))
+  (let ((ev (make-instance 'xcb:ButtonRelease)))
     (xcb:unmarshal ev data)
     (with-slots (detail event event-x event-y) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
+	(cheerilee--button-release (nth 1 fr) event-x event-y detail fr)
 	(cheerilee--apply-function lst #'cheerilee--button-release
 				   event-x event-y detail fr)))))
 
@@ -123,7 +126,9 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
   (let ((ev (make-instance 'xcb:ButtonPress)))
     (xcb:unmarshal ev data)
     (with-slots (detail event state) ev
-      (let ((lst (nthcdr 4 (cheerilee-get-frame event cheerilee--model-tree))))
+      (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
+	     (lst (nthcdr 4 fr)))
+	(cheerilee--key-press (nth 1 fr) detail state)
 	(cheerilee--apply-function lst #'cheerilee--key-press
 				   detail state)))))
 
@@ -136,7 +141,9 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
   (let ((ev (make-instance 'xcb:ButtonPress)))
     (xcb:unmarshal ev data)
     (with-slots (detail event state) ev
-      (let ((lst (nthcdr 4 (cheerilee-get-frame event cheerilee--model-tree))))
+      (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
+	     (lst (nthcdr 4 fr)))
+	(cheerilee--key-release (nth 1 fr) detail state)
 	(cheerilee--apply-function lst #'cheerilee--key-release
 				   detail state)))))
 
@@ -253,7 +260,7 @@ BODY is the sequence of instructions to execute when calling the event."
 	 `(defmethod ,name ((this ,class) x y tree)
 	    ,@body))
 	(t
-	 (error "Invalid event type"))))
+	 (error "[Cheerilee] Invalid event type"))))
 
 (provide 'cheerilee-handle)
 
