@@ -254,7 +254,7 @@ BODY is the sequence of instructions to execute when calling the event."
 	 `(defmethod ,name ((this ,class) x y detail tree)
 	    ,@body))
 	((eq type 'keyboard)
-	 `(defmethod ,name ((this ,class) detail modifier)
+	 `(defmethod ,name ((this ,class) detail modifier tree)
 	    ,@body))
 	((eq type 'motion)
 	 `(defmethod ,name ((this ,class) x y tree)
