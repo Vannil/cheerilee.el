@@ -219,7 +219,7 @@ application in which the event happened."
 DETAIL is the key pressed, MODIFIER any additional key that can chage the
 actual value."
   (dolist (el (oref ctrl key-press))
-    (funcall el ctrl detail modifier)))
+    (funcall el ctrl detail modifier (list tree))))
 
 (defmethod cheerilee--key-release ((ctrl cheerilee-control) detail modifier tree)
     "Execute CTRL's Keyboard Button Release handling functions.
@@ -227,7 +227,7 @@ actual value."
 DETAIL is the key released, MODIFIER any additional key that can chage the
 actual value."
   (dolist (el (oref ctrl key-release))
-    (funcall el ctrl detail modifier)))
+    (funcall el ctrl detail modifier (list tree))))
 
 (defmacro cheerilee-defevent (name type class &optional docstring &rest body)
   "Define a new event handler.

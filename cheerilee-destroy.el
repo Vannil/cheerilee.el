@@ -39,9 +39,10 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (with-slots (event window) ev
       (let* ((fr (cheerilee-get-frame event cheerilee--model-tree))
 	     (lst (nthcdr 4 fr)))
-	(cheerilee--dispose-control (nth 1 fr))
-	(cheerilee--apply-dispose lst))))
-  (xcb:flush cheerilee-connection))
+	(when fr
+	  (cheerilee--dispose-control (nth 1 fr))
+	  (cheerilee--apply-dispose lst)
+	  (xcb:flush cheerilee-connection))))))
 
 (defun cheerilee--apply-dispose (list)
   "Begin clean-up operations on each element of LIST.
