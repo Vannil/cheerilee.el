@@ -1,3 +1,9 @@
+2016-03-01  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-core.el: New Function, New Error Messages
+	Added a new core function.
+	Added some error messages for core functions.
+
 2016-02-26  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-handle.el: Better Handling
