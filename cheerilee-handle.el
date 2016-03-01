@@ -50,7 +50,8 @@
     (xcb:+event cheerilee-connection
 		'xcb:KeyRelease #'cheerilee-key-release-event)
     (xcb:+event cheerilee-connection
-		'xcb:KeyRelease #'cheerilee-motion-notify-event)))
+		'xcb:KeyRelease #'cheerilee-motion-notify-event)
+    (setq cheerilee-event-initialized t)))
 
 ;; Behold the heavy copy&paste used here!
 
