@@ -90,16 +90,18 @@ Every application using this library will be closed as a consequence."
 ;;;###autoload
 (defun cheerilee-start-operations ()
   "Begins the rendering operations."
-  (let ((l (cheerilee-get-element-list)))
-    (cheerilee--open-all-fonts l)
-    (xcb:flush cheerilee-connection)
-    (dotimes (i 2 i)
+  (if (not cheerilee-connection)
+      (error "[Cheerilee] No connection available")
+    (let ((l (cheerilee-get-element-list)))
+      (cheerilee--open-all-fonts l)
+      (xcb:flush cheerilee-connection)
+      (dotimes (i 2 i)
+	(dolist (el l)
+	  (cheerilee--display-tree el))
+	(xcb:flush cheerilee-connection))
       (dolist (el l)
-	(cheerilee--display-tree el))
-      (xcb:flush cheerilee-connection))
-    (dolist (el l)
-      (cheerilee-clear-area el)
-      (xcb:flush cheerilee-connection))))
+	(cheerilee-clear-area el)
+	(xcb:flush cheerilee-connection)))))
 
 ;;;###autoload
 (defun cheerilee-process-alive-p ()
@@ -116,6 +118,14 @@ the connection open."
 (defun cheerilee-add-tree (tree)
   "Make TREE visible to the rendering operations."
   (nconc cheerilee--model-tree tree))
+
+;;;###autoload
+(defun cheerilee-keycode-to-keysym (key modifier)
+  "Return the keysym (a number) of KEY with the MODIFIER mask applied."
+  (if cheerilee-connection
+      (xcb:keysyms:keycode->keysym cheerilee-connection
+				   key modifier)
+    (error "[Cheerilee] No connection available")))
 
 (defsubst cheerilee-get-display ()
   "Return the ID associated with the display."
