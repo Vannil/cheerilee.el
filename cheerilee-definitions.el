@@ -28,6 +28,20 @@
 (require 'cheerilee-classes)
 (require 'cheerilee-core)
 
+(defsubst cheerilee--mapcar-when-list (list)
+  "Return a list containing conses."
+  (delq nil
+	(mapcar (lambda (x) (when (and (not (eq (car-safe x) 'cons))
+				  (not (eq (car-safe x) 'quote))
+				  (listp x)) x)) list)))
+
+(defsubst cheerilee--mapcar-unless-list (list)
+  "Return a list not containing conses."
+  (delq nil
+	(mapcar (lambda (x) (unless (and (not (eq (car-safe x) 'cons))
+				    (not (eq (car-safe x) 'quote))
+				    (listp x)) x)) list)))
+
 (defmacro cheerilee-defframe (id &rest args)
   "Define a new frame.
 
@@ -45,16 +59,8 @@ The available keywords for frames are:
   (let ((instlist)
 	(restlist))
     (when args
-      (setq instlist
-	    (delq nil
-		  (mapcar (lambda (x) (unless (and (not (eq (car-safe x) 'cons))
-					      (not (eq (car-safe x) 'quote))
-					      (listp x)) x)) args)))
-      (setq restlist
-	    (delq nil
-		  (mapcar (lambda (x) (when (and (not (eq (car-safe x) 'cons))
-					    (not (eq (car-safe x) 'quote))
-					    (listp x)) x)) args))))
+      (setq instlist (cheerilee--mapcar-unless-list args))
+      (setq restlist (cheerilee--mapcar-when-list args)))
     `(list (list 'frame
 		 (make-instance cheerilee-frame
 				,@instlist)
@@ -80,16 +86,8 @@ The available keywords for windows are:
   (let ((instlist)
 	(restlist))
     (when args
-      (setq instlist
-	    (delq nil
-		  (mapcar (lambda (x) (unless (and (not (eq (car-safe x) 'cons))
-					      (not (eq (car-safe x) 'quote))
-					      (listp x)) x)) args)))
-      (setq restlist
-	    (delq nil
-		  (mapcar (lambda (x) (when (and (not (eq (car-safe x) 'cons))
-					    (not (eq (car-safe x) 'quote))
-					    (listp x)) x)) args))))
+      (setq instlist (cheerilee--mapcar-unless-list args))
+      (setq restlist (cheerilee--mapcar-when-list args)))
     `(list 'window
 	   (make-instance cheerilee-window
 			  ,@instlist)
@@ -117,17 +115,9 @@ The available keywords for buttons are:
   (let ((instlist)
 	(restlist))
     (when args
-      (setq instlist
-	    (delq nil
-		  (mapcar (lambda (x) (unless (and (not (eq (car-safe x) 'cons))
-					      (not (eq (car-safe x) 'quote))
-					      (listp x)) x)) args)))
-      (setq restlist
-	    (delq nil
-		  (mapcar (lambda (x) (when (and (not (eq (car-safe x) 'cons))
-					    (not (eq (car-safe x) 'quote))
-					    (listp x)) x)) args))))
-      `(list 'button
+      (setq instlist (cheerilee--mapcar-unless-list args))
+      (setq restlist (cheerilee--mapcar-when-list args)))
+    `(list 'button
 	   (make-instance cheerilee-button
 			  ,@instlist)
 	   (xcb:generate-id cheerilee-connection)
@@ -153,17 +143,9 @@ The available keywords for buttons are:
   (let ((instlist)
 	(restlist))
     (when args
-      (setq instlist
-	    (delq nil
-		  (mapcar (lambda (x) (unless (and (not (eq (car-safe x) 'cons))
-					      (not (eq (car-safe x) 'quote))
-					      (listp x)) x)) args)))
-      (setq restlist
-	    (delq nil
-		  (mapcar (lambda (x) (when (and (not (eq (car-safe x) 'cons))
-					    (not (eq (car-safe x) 'quote))
-					    (listp x)) x)) args))))
-      `(list 'text
+      (setq instlist (cheerilee--mapcar-unless-list args))
+      (setq restlist (cheerilee--mapcar-when-list args)))
+    `(list 'text
 	   (make-instance cheerilee-text
 			  ,@instlist)
 	   (xcb:generate-id cheerilee-connection)
@@ -190,17 +172,9 @@ The available keywords for buttons are:
   (let ((instlist)
 	(restlist))
     (when args
-      (setq instlist
-	    (delq nil
-		  (mapcar (lambda (x) (unless (and (not (eq (car-safe x) 'cons))
-					      (not (eq (car-safe x) 'quote))
-					      (listp x)) x)) args)))
-      (setq restlist
-	    (delq nil
-		  (mapcar (lambda (x) (when (and (not (eq (car-safe x) 'cons))
-					    (not (eq (car-safe x) 'quote))
-					    (listp x)) x)) args))))
-      `(list 'textbox
+      (setq instlist (cheerilee--mapcar-unless-list args))
+      (setq restlist (cheerilee--mapcar-when-list args)))
+    `(list 'textbox
 	   (make-instance cheerilee-textbox
 			  ,@instlist)
 	   (xcb:generate-id cheerilee-connection)
