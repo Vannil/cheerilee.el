@@ -44,9 +44,10 @@ Texts.  A copy of the license is included in the section entitled
 @menu
 * Overview::    A general introduction to the library.
 * Installation::  Getting it to work.
-* Connecting:: Starting and stopping the connection.
+* Connecting:: Starting the connection.
 * Defining Elements::     Creating the elements to display.
 * Starting Applications:: Running an application after defining it.
+* Stopping Applications:: Close running applications.
 * Events:: Handling different kinds of events.
 * GNU Free Documentation License::  Licensing this manual
 * Index::         Complete Index.
@@ -96,13 +97,6 @@ The connection is done through a socket, so the server must run
 in the same machine as Emacs.
 
 The function also initializes event handling.
-@end defun
-
-@defun cheerilee-close-absolutely-everything
-Disconnects Emacs from the X server.
-
-Since the connection is closed, any running application is automatically
-closed, and any allocated resource is freed from memory.
 @end defun
 
 @defun cheerilee-process-alive-p
@@ -356,6 +350,28 @@ This is the function that actually begin the execution.  It should be
 always called when starting an application, after adding its tree.
 @end defun
 
+@node Stopping Applications
+@chapter Stopping Applications
+@cindex Stop the execution
+Eventually, an application has to be closed.
+The following functions will properly close one or more running applications,
+leaving a clean environment.
+
+@defun cheerilee-close-application window
+Closes the application running inside @var{window}.
+
+@var{window} is the ID given by the X server to the X window.  Every
+element has this ID saved inside the @code{frame} property. You can access this value
+with @code{oref} or @code{slot-value} (@pxref{(eieio)Accessing Slots}).
+@end defun
+
+@defun cheerilee-close-absolutely-everything
+Disconnects Emacs from the X server.
+
+Since the connection is closed, any running application is automatically
+closed, and any allocated resource is freed from memory.
+@end defun
+
 @node Events
 @chapter Events
 @cindex Handling Events
@@ -460,6 +476,10 @@ The element that received the event.
 
 @defvar detail
 The button pressed, as a number.
+This value is the keycode given by the X server.
+Keycodes are hardware-oriented, to have a more usable value,
+e.g. to compare it with ASCII decimal values, you need to convert
+it to a keysym, with a function explained later in the section.
 @end defvar
 
 @defvar modifier
@@ -492,6 +512,13 @@ will associate @code{keyboard-event-function} with every element called
 This function works the same as @code{cheerilee-add-key-press-event},
 with the difference that @var{fun} is called when any keyboard button
 is released.
+@end defun
+
+To convert a keycode to a keysym, you use the following function:
+
+@defun cheerilee-keycode-to-keysym detail modifier
+This function converts a keycode to a keysym.
+The keysym can then be used to check for specific key press.
 @end defun
 
 @node Motion Events

@@ -37,9 +37,10 @@ This manual is for the Cheerilee toolkit library.
 
 * Overview::    A general introduction to the library.
 * Installation::  Getting it to work.
-* Connecting:: Starting and stopping the connection.
+* Connecting:: Starting the connection.
 * Defining Elements::     Creating the elements to display.
 * Starting Applications:: Running an application after defining it.
+* Stopping Applications:: Close running applications.
 * Events:: Handling different kinds of events.
 * GNU Free Documentation License::  Licensing this manual
 * Index::         Complete Index.
@@ -96,13 +97,6 @@ the server.
      machine as Emacs.
 
      The function also initializes event handling.
-
- -- Function: cheerilee-close-absolutely-everything
-     Disconnects Emacs from the X server.
-
-     Since the connection is closed, any running application is
-     automatically closed, and any allocated resource is freed from
-     memory.
 
  -- Function: cheerilee-process-alive-p
      Returns 'nil' if there is no connection with the X server,
@@ -325,7 +319,7 @@ one, but now the frame has a second child, a button with ID "?k".
          :text "Click Here!"))
 
 
-File: cheerilee.info,  Node: Starting Applications,  Next: Events,  Prev: Defining Elements,  Up: Top
+File: cheerilee.info,  Node: Starting Applications,  Next: Stopping Applications,  Prev: Defining Elements,  Up: Top
 
 5 Starting Applications
 ***********************
@@ -349,9 +343,34 @@ begin running the application.
      tree.
 
 
-File: cheerilee.info,  Node: Events,  Next: GNU Free Documentation License,  Prev: Starting Applications,  Up: Top
+File: cheerilee.info,  Node: Stopping Applications,  Next: Events,  Prev: Starting Applications,  Up: Top
 
-6 Events
+6 Stopping Applications
+***********************
+
+Eventually, an application has to be closed.  The following functions
+will properly close one or more running applications, leaving a clean
+environment.
+
+ -- Function: cheerilee-close-application window
+     Closes the application running inside WINDOW.
+
+     WINDOW is the ID given by the X server to the X window.  Every
+     element has this ID saved inside the 'frame' property.  You can
+     access this value with 'oref' or 'slot-value' (*note
+     (eieio)Accessing Slots::).
+
+ -- Function: cheerilee-close-absolutely-everything
+     Disconnects Emacs from the X server.
+
+     Since the connection is closed, any running application is
+     automatically closed, and any allocated resource is freed from
+     memory.
+
+
+File: cheerilee.info,  Node: Events,  Next: GNU Free Documentation License,  Prev: Stopping Applications,  Up: Top
+
+7 Events
 ********
 
 Event handlers are special functions, associated with an element of the
@@ -391,7 +410,7 @@ to the application.
 
 File: cheerilee.info,  Node: Mouse Button Events,  Next: Keyboard Events,  Up: Events
 
-6.1 Mouse Button Events
+7.1 Mouse Button Events
 =======================
 
 Mouse event handlers are defined by giving 'button' to
@@ -438,7 +457,7 @@ Mouse event handlers are defined by giving 'button' to
 
 File: cheerilee.info,  Node: Keyboard Events,  Next: Motion Events,  Prev: Mouse Button Events,  Up: Events
 
-6.2 Keyboard Events
+7.2 Keyboard Events
 ===================
 
 Keyboard event handlers are defined by giving 'keyboard' to
@@ -450,11 +469,18 @@ Keyboard event handlers are defined by giving 'keyboard' to
      The element that received the event.
 
  -- Variable: detail
-     The button pressed, as a number.
+     The button pressed, as a number.  This value is the keycode given
+     by the X server.  Keycodes are hardware-oriented, to have a more
+     usable value, e.g.  to compare it with ASCII decimal values, you
+     need to convert it to a keysym, with a function explained later in
+     the section.
 
  -- Variable: modifier
      Any special button pressed together with 'detail', like <CTRL> or
      <META>.
+
+ -- Variable: tree
+     The application that received the event.
 
    After defining the handler, you can use it for two types of events:
 
@@ -475,10 +501,16 @@ Keyboard event handlers are defined by giving 'keyboard' to
      with the difference that FUN is called when any keyboard button is
      released.
 
+   To convert a keycode to a keysym, you use the following function:
+
+ -- Function: cheerilee-keycode-to-keysym detail modifier
+     This function converts a keycode to a keysym.  The keysym can then
+     be used to check for specific key press.
+
 
 File: cheerilee.info,  Node: Motion Events,  Prev: Keyboard Events,  Up: Events
 
-6.3 Motion Events
+7.3 Motion Events
 =================
 
 Motion event handlers are defined by giving 'motion' to
@@ -1023,6 +1055,7 @@ Concepts Index
 * Overview:                              Overview.              (line 6)
 * Run an application after defining it:  Starting Applications. (line 6)
 * Some complete examples:                Examples.              (line 6)
+* Stop the execution:                    Stopping Applications. (line 6)
 
 
 File: cheerilee.info,  Node: Functions,  Next: Variables,  Prev: Index,  Up: Top
@@ -1035,12 +1068,15 @@ Functions Index
 
 * cheerilee-add-button-press-event:      Mouse Button Events.  (line 30)
 * cheerilee-add-button-release-event:    Mouse Button Events.  (line 42)
-* cheerilee-add-key-press-event:         Keyboard Events.      (line 23)
-* cheerilee-add-key-release-event:       Keyboard Events.      (line 35)
+* cheerilee-add-key-press-event:         Keyboard Events.      (line 30)
+* cheerilee-add-key-release-event:       Keyboard Events.      (line 42)
 * cheerilee-add-motion-event:            Motion Events.        (line 27)
 * cheerilee-add-tree:                    Starting Applications.
                                                                (line  9)
-* cheerilee-close-absolutely-everything: Connecting.           (line 22)
+* cheerilee-close-absolutely-everything: Stopping Applications.
+                                                               (line 18)
+* cheerilee-close-application:           Stopping Applications.
+                                                               (line 10)
 * cheerilee-connect:                     Connecting.           (line 15)
 * cheerilee-defbutton:                   Button.               (line  9)
 * cheerilee-defevent:                    Events.               (line 12)
@@ -1050,7 +1086,8 @@ Functions Index
 * cheerilee-defwindow:                   Window.               (line 10)
 * cheerilee-initialize-events:           Starting Applications.
                                                                (line 14)
-* cheerilee-process-alive-p:             Connecting.           (line 29)
+* cheerilee-keycode-to-keysym:           Keyboard Events.      (line 49)
+* cheerilee-process-alive-p:             Connecting.           (line 22)
 * cheerilee-start-operations:            Starting Applications.
                                                                (line 19)
 
@@ -1066,12 +1103,13 @@ Variables Index
 * cheerilee-connection:                  Connecting.           (line  8)
 * detail:                                Mouse Button Events.  (line 22)
 * detail <1>:                            Keyboard Events.      (line 14)
-* modifier:                              Keyboard Events.      (line 17)
+* modifier:                              Keyboard Events.      (line 21)
 * this:                                  Mouse Button Events.  (line 11)
 * this <1>:                              Keyboard Events.      (line 11)
 * this <2>:                              Motion Events.        (line 11)
 * tree:                                  Mouse Button Events.  (line 25)
-* tree <1>:                              Motion Events.        (line 22)
+* tree <1>:                              Keyboard Events.      (line 25)
+* tree <2>:                              Motion Events.        (line 22)
 * x:                                     Mouse Button Events.  (line 14)
 * x <1>:                                 Motion Events.        (line 14)
 * y:                                     Mouse Button Events.  (line 18)
@@ -1081,24 +1119,25 @@ Variables Index
 
 Tag Table:
 Node: Top703
-Node: Overview1823
-Node: Installation2350
-Node: Connecting2673
-Node: Defining Elements3705
-Node: Frame4298
-Node: Window5387
-Node: Button7021
-Node: Text8074
-Node: Textbox8676
-Node: Examples9266
-Node: Starting Applications10455
-Node: Events11300
-Node: Mouse Button Events12820
-Node: Keyboard Events14286
-Node: Motion Events15528
-Node: GNU Free Documentation License16655
-Node: Index41798
-Node: Functions43260
-Node: Variables44832
+Node: Overview1864
+Node: Installation2391
+Node: Connecting2714
+Node: Defining Elements3505
+Node: Frame4098
+Node: Window5187
+Node: Button6821
+Node: Text7874
+Node: Textbox8476
+Node: Examples9066
+Node: Starting Applications10255
+Node: Stopping Applications11115
+Node: Events11997
+Node: Mouse Button Events13517
+Node: Keyboard Events14983
+Node: Motion Events16801
+Node: GNU Free Documentation License17928
+Node: Index43071
+Node: Functions44606
+Node: Variables46452
 
 End Tag Table
