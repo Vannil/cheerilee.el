@@ -193,7 +193,8 @@ X and Y are used to determine the location of the mouse; DETAIL is a
 description of the button that generated the event; TREE is the
 application in which the event happened."
   (let ((cr (oref ctrl clip-region)))
-    (when (and (<= (nth 0 cr) x (+ (nth 0 cr) (nth 2 cr)))
+    (when (and cr
+	       (<= (nth 0 cr) x (+ (nth 0 cr) (nth 2 cr)))
 	       (<= (nth 1 cr) y (+ (nth 1 cr) (nth 3 cr)))
 	       (null (oref ctrl capture)))
       (oset ctrl capture t)
@@ -209,7 +210,8 @@ application in which the event happened."
   (let ((cr (oref ctrl clip-region)))
     (when (eq (oref ctrl capture) t)
       (oset ctrl capture nil))
-    (when (and (<= (nth 0 cr) x (+ (nth 0 cr) (nth 2 cr)))
+    (when (and cr
+	       (<= (nth 0 cr) x (+ (nth 0 cr) (nth 2 cr)))
 	       (<= (nth 1 cr) y (+ (nth 1 cr) (nth 3 cr))))
       (dolist (el (oref ctrl button-rel))
 	(funcall el ctrl x y detail (list tree))))))
