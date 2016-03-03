@@ -100,7 +100,7 @@ A positive argument makes the line thicker, a negative one makes it narrower."
        (cheerilee-get-frame (oref ctrl frame) (cheerilee-get-element-list))
        (- (car l) lw) (- (cdr l) lw) (+ (car s) lw lw) (+ (cdr s) lw lw))
       (oset ctrl line-width lw)
-      (xcb:+request cheerilee-connection
+      (xcb:-+request cheerilee-connection
 	  (make-instance 'xcb:ChangeGC
 			 :gc (oref ctrl id)
 			 :value-mask xcb:GC:LineWidth
@@ -113,7 +113,7 @@ NEW must be a string identifying a font name, according
 to the X11 specifications."
   (cheerilee--open-a-font new)
   (let ((f (assoc new cheerilee--fonts-alist)))
-    (xcb:+request cheerilee-connection
+    (xcb:-+request cheerilee-connection
 	(make-instance 'xcb:ChangeGC
 		       :gc (oref ctrl id)
 		       :value-mask xcb:GC:Font

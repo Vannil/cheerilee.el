@@ -100,13 +100,13 @@ any element with the cdr of the car equal to EL."
       (setcdr fa (cheerilee--cdr-delete-all g fa)))
     (when (cdr tx)
       (setcdr tx (cheerilee--cdr-delete-all g tx)))
-    (xcb:+request cheerilee-connection
+    (xcb:-+request cheerilee-connection
 	(make-instance 'xcb:FreeGC
 		       :gc g))))
 
 (defmethod cheerilee--dispose-control ((frame cheerilee-frame))
   "Remove FRAME and its children from `cheerilee--model-tree'."
-  (xcb:+request cheerilee-connection
+  (xcb:-+request cheerilee-connection
       (make-instance 'xcb:DestroyWindow
 		     :window (oref frame id)))
   (cheerilee--remove-from-tree (oref frame id)))

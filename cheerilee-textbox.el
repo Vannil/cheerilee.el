@@ -78,7 +78,7 @@ handlers for this type of events."
       (oset box text (substring b 0 (1- (length b)))))
     (cheerilee-change-text-content box (oref box text))))
 
-(defmethod cheerilee--key-press ((box cheerilee-textbox) detail modifier)
+(defmethod cheerilee--key-press ((box cheerilee-textbox) detail modifier tree)
   "Manages text insertion for BOX.
 
 Detail is processed to show the proper symbol. MODIFIER is the value of

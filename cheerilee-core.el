@@ -79,7 +79,7 @@ Every application using this library will be closed as a consequence."
   (when (and cheerilee-connection
 	     (member (oref cheerilee-connection process) (process-list)))
 	(dolist (el cheerilee--fonts-alist)
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:CloseFont :font (cdr el))))
 	(xcb:flush cheerilee-connection)
 	(xcb:disconnect cheerilee-connection))
@@ -136,7 +136,7 @@ If you call this function from an event handler, you can
 get the correct value by calling (oref this frame)."
   (if (not cheerilee-connection)
       (error "[Cheerilee] No connection available")
-    (xcb:+request cheerilee-connection
+    (xcb:-+request cheerilee-connection
 	(make-instance xcb:SendEvent
 		       :propagate 1
 		       :destination window
@@ -260,7 +260,7 @@ and their sizes (S1 and S2)."
 
 Anything drawn over GC outside of AREA is clipped.
 LINE-WIDTH makes sure to keep the objects border."
-  (xcb:+request cheerilee-connection
+  (xcb:-+request cheerilee-connection
       (make-instance
        'xcb:SetClipRectangles
        :ordering xcb:ClipOrdering:Unsorted

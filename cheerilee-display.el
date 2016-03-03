@@ -42,32 +42,32 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
     (xcb:unmarshal ev data)
     (with-slots (window) ev
 	(dolist (el (cdr (assoc 'rectangles cheerilee--shapes-alist)))
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:PolyRectangle
 			     :drawable (caar el)
 			     :gc (cdar el)
 			     :rectangles (cdr el))))
 	(dolist (el (cdr (assoc 'points cheerilee--shapes-alist)))
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:PolyPoint
 			     :coordinate-mode xcb:CoordMode:Origin
 			     :drawable (caar el)
 			     :gc (cdar el)
 			     :points (cdr el))))
 	(dolist (el (cdr (assoc 'arcs cheerilee--shapes-alist)))
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:PolyArc
 			     :drawable (caar el)
 			     :gc (cdar el)
 			     :arcs (cdr el))))
 	(dolist (el (cdr (assoc 'fillrect cheerilee--shapes-alist)))
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:PolyFillRectangle
 			     :drawable (caar el)
 			     :gc (cdar el)
 			     :rectangles (cdr el))))
 	(dolist (el (cdr (assoc 'fillarcs cheerilee--shapes-alist)))
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:PolyFillArc
 			     :drawable (caar el)
 			     :gc (cdar el)
@@ -76,7 +76,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	  (let ((s (nth 2 el))
 		(p (nth 1 el))
 		(r (nth 3 el)))
-	    (xcb:+request cheerilee-connection
+	    (xcb:-+request cheerilee-connection
 		(make-instance 'xcb:ImageText8
 			       :string-len (length s)
 			       :drawable (caar el)
@@ -85,7 +85,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 			       :y (+ (cdr (nth 1 p)) 20)
 			       :string s))
 	    (when r
-	      (xcb:+request cheerilee-connection
+	      (xcb:-+request cheerilee-connection
 		  (make-instance 'xcb:ImageText8
 				 :string-len (length r)
 				 :drawable (caar el)
@@ -123,7 +123,7 @@ information the examined element should know about."
       (unless f
 	(let ((id (xcb:generate-id cheerilee-connection)))
 	  (push (cons font-name id) cheerilee--fonts-alist)
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:OpenFont
 			     :fid id
 			     :name-len (length font-name)
@@ -153,7 +153,7 @@ XID is the associated X11 ID, DATA any additional information."
       (oset frame id xid)
       (oset frame frame xid)
       (unless (oref frame open)
-	(xcb:+request cheerilee-connection
+	(xcb:-+request cheerilee-connection
 	    (make-instance 'xcb:CreateWindow
 			   :depth xcb:WindowClass:CopyFromParent
 			   :wid xid
@@ -175,7 +175,7 @@ XID is the associated X11 ID, DATA any additional information."
 			   :background-pixel (cheerilee--get-color
 					      (oref frame background))))
 	(when n
-	  (xcb:+request cheerilee-connection
+	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:ChangeProperty
 			     :mode xcb:PropMode:Replace
 			     :window xid
@@ -184,7 +184,7 @@ XID is the associated X11 ID, DATA any additional information."
 			     :format 8
 			     :data-len (length n)
 			     :data n)))
-	(xcb:+request cheerilee-connection
+	(xcb:-+request cheerilee-connection
 	    (make-instance 'xcb:MapWindow :window xid))
 	(oset frame open t)))))
 
@@ -210,7 +210,7 @@ XID is the associated X11 ID, DATA any additional information."
       (oset window frame f)
       (oset window font-id
 	    (cdr (assoc (oref window font) cheerilee--fonts-alist)))
-      (xcb:+request cheerilee-connection
+      (xcb:-+request cheerilee-connection
 	  (make-instance 'xcb:CreateGC
 			 :cid xid
 			 :drawable (nth 0 d)
@@ -265,7 +265,7 @@ XID is the associated X11 ID, DATA any additional information."
       (oset text frame f)
       (oset text font-id
 	    (cdr (assoc (oref text font) cheerilee--fonts-alist)))
-      (xcb:+request cheerilee-connection
+      (xcb:-+request cheerilee-connection
 	  (make-instance 'xcb:CreateGC
 			 :cid xid
 			 :drawable (nth 0 d)
@@ -309,7 +309,7 @@ XID is the associated X11 ID, DATA any additional information."
       (oset box frame f)
       (oset box font-id
 	    (cdr (assoc (oref box font) cheerilee--fonts-alist)))
-      (xcb:+request cheerilee-connection
+      (xcb:-+request cheerilee-connection
 	  (make-instance 'xcb:CreateGC
 			 :cid xid
 			 :drawable (nth 0 d)

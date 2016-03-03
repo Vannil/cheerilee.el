@@ -42,7 +42,7 @@ to clear."
 	(dy (if y y 0))
 	(w (if width width (car (oref (nth 1 frame) size))))
 	(h (if height height (cdr (oref (nth 1 frame) size)))))
-    (xcb:+request cheerilee-connection
+    (xcb:-+request cheerilee-connection
 	(make-instance 'xcb:ClearArea
 		       :exposures 1
 		       :window (nth 2 frame)
