@@ -127,6 +127,27 @@ the connection open."
 				   key modifier)
     (error "[Cheerilee] No connection available")))
 
+;;;###autoload
+(defun cheerilee-close-application (window)
+  "Gently close the current application.
+WINDOW is the X ID associated with the application's frame.
+
+If you call this function from an event handler, you can
+get the correct value by calling (oref this frame)."
+  (if (not cheerilee-connection)
+      (error "[Cheerilee] No connection available")
+    (xcb:+request cheerilee-connection
+	(make-instance xcb:SendEvent
+		       :propagate 1
+		       :destination window
+		       :event-mask xcb:EventMask:StructureNotify
+		       :event (xcb:marshal
+			       (make-instance xcb:DestroyNotify
+					      :event window
+					      :window window)
+			       cheerilee-connection)))
+    (xcb:flush cheerilee-connection)))
+
 (defsubst cheerilee-get-display ()
   "Return the ID associated with the display."
   (cadar cheerilee--model-tree))
