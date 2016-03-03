@@ -1,3 +1,8 @@
+2016-03-03  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-definitions.el: Reorganized Macros
+	Changed a bit how macros operate.
+
 2016-03-01  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-core.el: New Function, New Error Messages
