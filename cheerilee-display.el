@@ -83,16 +83,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 			       :gc (cdar el)
 			       :x (+ (car (nth 1 p)) 4)
 			       :y (+ (cdr (nth 1 p)) 20)
-			       :string s))
-	    (when r
-	      (xcb:-+request cheerilee-connection
-		  (make-instance 'xcb:ImageText8
-				 :string-len (length r)
-				 :drawable (caar el)
-				 :gc (cdar el)
-				 :x (+ (car (nth 1 p)) 12)
-				 :y (+ (cdr (nth 1 p)) (nth 2 p) 3)
-				 :string r)))))
+			       :string s))))
 	(xcb:flush cheerilee-connection))))
 
 (defun cheerilee--display-tree (list &rest data)
