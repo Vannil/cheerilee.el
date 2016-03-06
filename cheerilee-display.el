@@ -75,15 +75,18 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	(dolist (el (cdr (assoc 'text8 cheerilee--shapes-alist)))
 	  (let ((s (nth 2 el))
 		(p (nth 1 el))
-		(r (nth 3 el)))
-	    (xcb:-+request cheerilee-connection
-		(make-instance 'xcb:ImageText8
-			       :string-len (length s)
-			       :drawable (caar el)
-			       :gc (cdar el)
-			       :x (+ (car (nth 1 p)) 4)
-			       :y (+ (cdr (nth 1 p)) 20)
-			       :string s))))
+		(r (nth 3 el))
+		(i 0))
+	    (dolist (sp (split-string s "[\n\r]+" t " "))
+	      (xcb:-+request cheerilee-connection
+			     (make-instance 'xcb:ImageText8
+					    :string-len (length sp)
+					    :drawable (caar el)
+					    :gc (cdar el)
+					    :x (+ (car (nth 1 p)) 4)
+					    :y (+ (cdr (nth 1 p)) 20 i)
+					    :string sp))
+	      (setq i (+ i 10)))))
 	(xcb:flush cheerilee-connection))))
 
 (defun cheerilee--display-tree (list &rest data)
@@ -140,10 +143,26 @@ XID is the associated X11 ID, DATA any additional information."
 	  (w (or (car (oref frame size)) 320))
 	  (h (or (cdr (oref frame size)) 240))
 	  (n (oref frame name))
-	  (l (or (car data) (cons 0 0))))
+	  (l (or (car data) (cons 0 0)))
+	  cursor)
       (oset frame id xid)
       (oset frame frame xid)
       (unless (oref frame open)
+	;; This opens the "cursor" at least once,
+	;; without the overhead that would generate
+	;; if inside the recursive `open-all-fonts'
+	(cheerilee--open-a-font "cursor")
+	(setq cursor (cdr (assoc "cursor" cheerilee--fonts-alist)))
+	(oset frame cursor (xcb:generate-id cheerilee-connection))
+	(xcb:-+request cheerilee-connection
+	    (make-instance 'xcb:CreateGlyphCursor
+			   :cid (oref frame cursor)
+			   :source-font cursor
+			   :mask-font cursor
+			   :source-char cheerilee-cursor-default-cursor
+			   :mask-char cheerilee-cursor-default-cursor
+			   :fore-red 1 :fore-green 0 :fore-blue 1
+			   :back-red 0 :back-green 1 :back-blue 0))
 	(xcb:-+request cheerilee-connection
 	    (make-instance 'xcb:CreateWindow
 			   :depth xcb:WindowClass:CopyFromParent
@@ -155,6 +174,7 @@ XID is the associated X11 ID, DATA any additional information."
 			   :class xcb:WindowClass:InputOutput
 			   :visual (nth 1 d)
 			   :value-mask (logior xcb:CW:EventMask
+					       xcb:CW:Cursor
 					       xcb:CW:BackPixel)
 			   :event-mask (logior xcb:EventMask:Exposure
 					       xcb:EventMask:ButtonPress
@@ -164,7 +184,8 @@ XID is the associated X11 ID, DATA any additional information."
 					       xcb:EventMask:KeyPress
 					       xcb:EventMask:KeyRelease)
 			   :background-pixel (cheerilee--get-color
-					      (oref frame background))))
+					      (oref frame background))
+			   :cursor (oref frame cursor)))
 	(when n
 	  (xcb:-+request cheerilee-connection
 	      (make-instance 'xcb:ChangeProperty

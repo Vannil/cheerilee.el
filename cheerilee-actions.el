@@ -142,6 +142,30 @@ to the X11 specifications."
   "Return the content of BOX's text field."
   (oref box text))
 
+(defmethod cheerilee-change-cursor-shape ((ctrl cheerilee-control) value)
+  "Change FRAME's cursor shape to VALUE."
+  (let ((cursor (cdr (assoc "cursor" cheerilee--fonts-alist)))
+	(frame (nth 1
+		    (cheerilee-get-frame
+		     (oref ctrl frame) cheerilee--model-tree))))
+    (xcb:+request cheerilee-connection
+	(make-instance 'xcb:FreeCursor
+		       :cursor (oref frame cursor)))
+    (xcb:+request cheerilee-connection
+	(make-instance 'xcb:CreateGlyphCursor
+		     :cid (oref frame cursor)
+		     :source-font cursor
+		     :mask-font cursor
+		     :source-char value
+		     :mask-char value
+		     :fore-red 1 :fore-green 0 :fore-blue 1
+		     :back-red 0 :back-green 1 :back-blue 0))
+  (xcb:+request cheerilee-connection
+      (make-instance 'xcb:ChangeWindowAttributes
+		     :window (oref frame frame)
+		     :value-mask xcb:CW:Cursor
+		     :cursor (oref frame cursor)))))
+
 (provide 'cheerilee-actions)
 
 ;;; cheerilee-actions.el ends here

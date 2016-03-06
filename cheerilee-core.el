@@ -53,6 +53,15 @@
 (defvar cheerilee-event-initialized nil
   "If event handling was initialized.")
 
+(defconst cheerilee-cursor-default-cursor 68
+  "Value for the default arrow shape.")
+
+(defconst cheerilee-cursor-default-wait 150
+  "Value for the default clock shape.")
+
+(defconst cheerilee-cursor-default-select 58
+  "Value for the default hand shape.")
+
 ;;;###autoload
 (defun cheerilee-connect ()
   "Connect to the X Server."

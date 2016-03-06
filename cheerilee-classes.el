@@ -119,7 +119,9 @@
 	 :initform nil
 	 :type symbol
 	 :protection :private
-	 :documentation "Has the frame been mapped at least once?"))
+	 :documentation "Has the frame been mapped at least once?")
+   (cursor :type number
+	   :documentation "The cursor ID."))
   :documentation "A frame control.")
 
 (defclass cheerilee-window (cheerilee-bordered-area cheerilee-with-text)

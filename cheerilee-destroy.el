@@ -107,6 +107,9 @@ any element with the cdr of the car equal to EL."
 (defmethod cheerilee--dispose-control ((frame cheerilee-frame))
   "Remove FRAME and its children from `cheerilee--model-tree'."
   (xcb:-+request cheerilee-connection
+      (make-instance 'xcb:FreeCursor
+		     :cursor (oref frame cursor)))
+  (xcb:-+request cheerilee-connection
       (make-instance 'xcb:DestroyWindow
 		     :window (oref frame id)))
   (cheerilee--remove-from-tree (oref frame id)))
