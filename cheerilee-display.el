@@ -32,6 +32,14 @@
 
 ;; There is a lot of copy&paste here, beware!
 
+(defun cheerilee--string-to-char2b (string)
+  "Return a list of the characters in STRING converted to `xcb:CHAR2B'."
+  (mapcar (lambda (char)
+	    (make-instance 'xcb:CHAR2B
+			   :byte1 (logand char #xff)
+			   :byte2 (ash (logand char #xff00) -8)))
+	  string))
+
 (defun cheerilee-expose-event (data &optional fake)
   "Render each control defined in `cheerilee--model-tree' on the screen.
 
@@ -75,18 +83,24 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	(dolist (el (cdr (assoc 'text8 cheerilee--shapes-alist)))
 	  (let ((s (nth 2 el))
 		(p (nth 1 el))
-		(r (nth 3 el))
 		(i 0))
 	    (dolist (sp (split-string s "[\n\r]+" t " "))
-	      (xcb:-+request cheerilee-connection
-			     (make-instance 'xcb:ImageText8
-					    :string-len (length sp)
-					    :drawable (caar el)
-					    :gc (cdar el)
-					    :x (+ (car (nth 1 p)) 4)
-					    :y (+ (cdr (nth 1 p)) 20 i)
-					    :string sp))
-	      (setq i (+ i 10)))))
+	      (let* ((rq (xcb:+request cheerilee-connection
+			     (make-instance
+			      'xcb:QueryTextExtents
+			      :font (cdr (assoc (nth 0 p)
+						cheerilee--fonts-alist))
+			      :string (cheerilee--string-to-char2b sp))))
+		     (sz (car (xcb:+reply cheerilee-connection rq))))
+		(xcb:-+request cheerilee-connection
+			       (make-instance 'xcb:ImageText8
+					      :string-len (length sp)
+					      :drawable (caar el)
+					      :gc (cdar el)
+					      :x (+ (car (nth 1 p)) 4)
+					      :y (+ (cdr (nth 1 p)) 20 i)
+					      :string sp))
+		(setq i (+ i (oref sz font-descent) (oref sz font-ascent)))))))
 	(xcb:flush cheerilee-connection))))
 
 (defun cheerilee--display-tree (list &rest data)
