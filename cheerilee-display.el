@@ -84,7 +84,7 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 	  (let ((s (nth 2 el))
 		(p (nth 1 el))
 		(i 0))
-	    (dolist (sp (split-string s "[\n\r]+" t " "))
+	    (dolist (sp (split-string s "[\n\r]" nil " "))
 	      (let* ((rq (xcb:+request cheerilee-connection
 			     (make-instance
 			      'xcb:QueryTextExtents
@@ -158,7 +158,7 @@ XID is the associated X11 ID, DATA any additional information."
 	  (h (or (cdr (oref frame size)) 240))
 	  (n (oref frame name))
 	  (l (or (car data) (cons 0 0)))
-	  cursor)
+	  cursor curscol white)
       (oset frame id xid)
       (oset frame frame xid)
       (unless (oref frame open)
@@ -168,15 +168,21 @@ XID is the associated X11 ID, DATA any additional information."
 	(cheerilee--open-a-font "cursor")
 	(setq cursor (cdr (assoc "cursor" cheerilee--fonts-alist)))
 	(oset frame cursor (xcb:generate-id cheerilee-connection))
+	(setq white (color-values "white"))
+	(setq curscol (color-values (oref frame cursor-color)))
 	(xcb:-+request cheerilee-connection
 	    (make-instance 'xcb:CreateGlyphCursor
 			   :cid (oref frame cursor)
 			   :source-font cursor
 			   :mask-font cursor
 			   :source-char cheerilee-cursor-default-cursor
-			   :mask-char cheerilee-cursor-default-cursor
-			   :fore-red 1 :fore-green 0 :fore-blue 1
-			   :back-red 0 :back-green 1 :back-blue 0))
+			   :mask-char (1+ cheerilee-cursor-default-cursor)
+			   :fore-red (nth 0 curscol)
+			   :fore-green (nth 1 curscol)
+			   :fore-blue (nth 2 curscol)
+			   :back-red (nth 0 white)
+			   :back-green (nth 1 white)
+			   :back-blue (nth 2 white)))
 	(xcb:-+request cheerilee-connection
 	    (make-instance 'xcb:CreateWindow
 			   :depth xcb:WindowClass:CopyFromParent

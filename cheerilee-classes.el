@@ -121,7 +121,11 @@
 	 :protection :private
 	 :documentation "Has the frame been mapped at least once?")
    (cursor :type number
-	   :documentation "The cursor ID."))
+	   :documentation "The cursor ID.")
+   (cursor-color :initarg :cursor-color
+		 :initform "black"
+		 :type string
+		 :documentation "The cursor color."))
   :documentation "A frame control.")
 
 (defclass cheerilee-window (cheerilee-bordered-area cheerilee-with-text)

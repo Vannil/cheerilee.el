@@ -1,8 +1,13 @@
 2016-03-06  Alessio Vanni  <vannilla@firemail.cc>
 
-	* cheerilee-display.el (cheerilee-expose-event): Multiline Text
+	* cheerilee-display.el
+	(cheerilee-expose-event): Multiline Text
 	Fixed multiline text, now it is displayed correctly.
 	Works on any element supporting the :text argument.
+	(cheerilee--display-control): Cursor Color
+	Added custom cursor color as a frame property.
+	(cheerilee-expose-event): Multiline Text (2)
+	Allow for blank lines in multiline text.
 
 	* cheerilee-actions.el: New Action
 	It is now possible to change the cursor.
