@@ -1,3 +1,23 @@
+2016-03-06  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-actions.el: New Action
+	It is now possible to change the cursor.
+
+	* cheerilee-display.el
+	(cheerilee-expose-event): Multiline Text
+	Added experimental support for multiline text.
+	It is now possible to display a single text element
+	with multiple lines.
+	(cheerilee--display-control (frames)): Cursors
+	When the frame is created it will start with an
+	arrow shaped cursor.
+
+	* cheerilee-classes.el (cheerilee-frame): New Property
+	Added new property to handle cursors.
+
+	* cheerilee-core.el: Cursor Values
+	Added values for default cursor shapes.
+
 2016-03-03  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-core.el: New Function
