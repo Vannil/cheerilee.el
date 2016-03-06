@@ -1,5 +1,9 @@
 2016-03-06  Alessio Vanni  <vannilla@firemail.cc>
 
+	* cheerilee-display.el (cheerilee-expose-event): Multiline Text
+	Fixed multiline text, now it is displayed correctly.
+	Works on any element supporting the :text argument.
+
 	* cheerilee-actions.el: New Action
 	It is now possible to change the cursor.
 
