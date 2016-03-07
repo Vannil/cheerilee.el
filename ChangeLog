@@ -1,3 +1,12 @@
+2016-03-07  Alessio Vanni  <vannilla@firemail.cc>
+
+	* cheerilee-core.el: New default cursor value.
+
+	* cheerilee-display.el
+	(cheerilee--open-a-font): An error is signaled if the font can't be
+	opened.
+	(cheerilee-expose-event): Somewhat better font placement.
+
 2016-03-06  Alessio Vanni  <vannilla@firemail.cc>
 
 	* cheerilee-display.el
