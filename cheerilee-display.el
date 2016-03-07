@@ -98,7 +98,9 @@ is synthetic (i.e. sent with the function `xcb:SendEvent')."
 					      :drawable (caar el)
 					      :gc (cdar el)
 					      :x (+ (car (nth 1 p)) 4)
-					      :y (+ (cdr (nth 1 p)) 20 i)
+					      :y (+ (cdr (nth 1 p))
+						    (oref sz font-ascent)
+						    1 i)
 					      :string sp))
 		(setq i (+ i (oref sz font-descent) (oref sz font-ascent)))))))
 	(xcb:flush cheerilee-connection))))
@@ -135,7 +137,12 @@ information the examined element should know about."
 	      (make-instance 'xcb:OpenFont
 			     :fid id
 			     :name-len (length font-name)
-			     :name font-name)))))))
+			     :name font-name))
+	  (unless (xcb:+request+reply cheerilee-connection
+		      (make-instance 'xcb:QueryFont
+				     :font id))
+	    (error
+	     (format "[Cheerilee] Could not open font %s" font-name))))))))
 
 (defun cheerilee--open-all-fonts (list)
   "Open all fonts defined in each element of LIST."
