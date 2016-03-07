@@ -62,6 +62,9 @@
 (defconst cheerilee-cursor-default-select 58
   "Value for the default hand shape.")
 
+(defconst cheerilee-cursor-default-unavailable 0
+  "Value for the default cross shape.")
+
 ;;;###autoload
 (defun cheerilee-connect ()
   "Connect to the X Server."
