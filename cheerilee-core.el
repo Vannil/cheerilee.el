@@ -162,7 +162,7 @@ get the correct value by calling (oref this frame)."
 
 (defsubst cheerilee-get-display ()
   "Return the ID associated with the display."
-  (cadar cheerilee--model-tree))
+  (cadr (car cheerilee--model-tree)))
 
 (defsubst cheerilee-get-element-list ()
   "Return a list of all defined elements in `cheerilee--model-tree'."
